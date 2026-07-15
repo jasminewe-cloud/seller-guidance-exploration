@@ -1675,8 +1675,16 @@ class Component extends DCLogic {
   restartA(){ this.setState(()=>({a:{ messages:this.INIT_A.slice(), mode:'input', addressValue:'', chips:[], ctaLabel:'', actionIdx:0, timing:null, screen:'chat', anchor:0, moreBelow:false, spacerH:0, claimed:false, view:'home', expanded:-1 }, ob:{ beat:0 }})); }
   openExplore(){ this.setState(s=>({a:{...s.a, view:'explore'}})); }
   toggleMs(i){ this.setState(s=>({a:{...s.a, expanded: s.a.expanded===i ? -1 : i}})); }
-  prevMs(){ this.setState(s=>({a:{...s.a, expanded: Math.max(0, s.a.expanded-1)}})); }
-  nextMs(){ this.setState(s=>({a:{...s.a, expanded: Math.min(this.MS.length-1, s.a.expanded+1)}})); }
+  prevMs(){
+    const target = Math.max(0, this.state.a.expanded-1);
+    this.setState(s=>({a:{...s.a, expanded:-1}}));
+    setTimeout(()=>{ this.setState(s=>({a:{...s.a, expanded:target}})); }, 370);
+  }
+  nextMs(){
+    const target = Math.min(this.MS.length-1, this.state.a.expanded+1);
+    this.setState(s=>({a:{...s.a, expanded:-1}}));
+    setTimeout(()=>{ this.setState(s=>({a:{...s.a, expanded:target}})); }, 370);
+  }
   openTool(i){ this.setState(s=>({a:{...s.a, view:'tool', actionIdx:i, askedKeys:[]}}), ()=>{ const el=this.aToolScrollRef.current; if(el) el.scrollTop=0; }); }
   msOfTool(t){ for(let i=0;i<this.MS.length;i++){ if(this.MS[i].actions.some(a=>a.tool===t)) return i; } return -1; }
   backHome(){ this.setState(s=>({a:{...s.a, view:'home', expanded: this.msOfTool(s.a.actionIdx)}})); }

@@ -1598,7 +1598,7 @@ class Component extends DCLogic {
     // how → Tool 3 (selling options), why → Tool 3 (sell/rent/wait)
     const map = { value:0, timing:0, proceeds:0, how:3, why:3 };
     const idx = map[this.state.ob.uncertainty] ?? 0;
-    this.setState(s=>({ ob:{...s.ob, beat:5}, a:{...s.a, view:'tool', actionIdx:idx, screen:'action'} }));
+    this.setState(s=>({ ob:{...s.ob, beat:5}, a:{...s.a, view:'tool', actionIdx:idx, screen:'action', claimed:true} }));
   }
 
   refreshMore(){ const c=this.aScrollRef.current; if(!c) return; const nodes=c.querySelectorAll('[data-mi]'); const last=nodes[nodes.length-1]; let more=false; if(last){ const cr=c.getBoundingClientRect(); more = last.getBoundingClientRect().bottom > cr.bottom + 6; } if(more!==this.state.a.moreBelow) this.setState(s=>({a:{...s.a, moreBelow:more}})); }

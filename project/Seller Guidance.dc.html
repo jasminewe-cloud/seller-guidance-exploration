@@ -1928,17 +1928,18 @@ class Component extends DCLogic {
       salePct:salePct+'%', mortPct:mortPct+'%',
       milestones: (()=>{
         const N = this.MS.length;
-        const PEEK = 80;  // collapsed card height — tall enough for title + subtitle
-        const STEP = 64;  // distance between each card's bottom edge (overlap = 16px)
-        // card 0 sits highest in the container (furthest from bottom)
-        // card N-1 sits at the bottom
+        const PEEK = 78;   // collapsed card height px
+        const STEP = 66;   // distance between collapsed card bottom edges
+        const TRANS = 'transition:bottom .38s cubic-bezier(0.2,0.8,0.2,1),height .38s cubic-bezier(0.2,0.8,0.2,1),box-shadow .3s ease,border-radius .3s ease;';
+        const BASE = 'position:absolute;left:0;right:0;overflow:hidden;display:flex;flex-direction:column;background:#fff;';
+        // card 0 sits highest (largest bottom offset), card N-1 at bottom=0
         const bottomOf = (i) => (N - 1 - i) * STEP;
-        const zOf = (i) => N - i; // card 0 = highest z in collapsed stack
         return this.MS.map((m,i)=>{
           const expanded = a.expanded===i;
+          // both states use bottom+height so CSS can interpolate between them
           const cardStyle = expanded
-            ? 'position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:78%;z-index:30;border-radius:20px;background:#fff;box-shadow:0 12px 40px rgba(17,17,22,.28);overflow:hidden;display:flex;flex-direction:column;'
-            : `position:absolute;left:0;right:0;bottom:${bottomOf(i)}px;height:${PEEK}px;z-index:${zOf(i)};border-radius:20px 20px 0 0;background:#fff;box-shadow:0 -6px 16px rgba(17,17,22,.12);overflow:hidden;`;
+            ? BASE + `bottom:11%;height:78%;z-index:30;border-radius:20px;box-shadow:0 12px 40px rgba(17,17,22,.28);` + TRANS
+            : BASE + `bottom:${bottomOf(i)}px;height:${PEEK}px;z-index:${N-i};border-radius:20px 20px 0 0;box-shadow:0 -4px 14px rgba(17,17,22,.11);` + TRANS;
           return {
             name: m.name, sub: m.sub,
             expanded, collapsed: !expanded,

@@ -19,10 +19,6 @@
   @keyframes beatIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
   .beat-screen{animation:beatIn 360ms cubic-bezier(.25,.46,.45,.94) both;}
   @keyframes cardLift{from{opacity:0;transform:translateY(80px) scale(1.1);}to{opacity:1;transform:translateY(0) scale(1);}}
-  @keyframes msScaleUp{from{transform:scale(0.84);opacity:.7;}to{transform:scale(1);opacity:1;}}
-  @keyframes msScaleDown{from{transform:scale(1);opacity:1;}to{transform:scale(0.84);opacity:.7;}}
-  .ms-scale-up{animation:msScaleUp .34s cubic-bezier(0.2,0.8,0.2,1) both;}
-  .ms-scale-down{animation:msScaleDown .32s cubic-bezier(0.4,0,0.2,1) both;}
   .hf-input{display:block;width:100%;height:48px;padding:0 14px;border:1px solid var(--gray-300);border-radius:8px;font-family:var(--font-ui);font-size:16px;color:var(--gray-900);background:#fff;outline:none;box-sizing:border-box;}
   .hf-input:focus{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--blue-400),0 0 0 6px var(--blue-600);}
   .hf-select{display:block;width:100%;height:48px;padding:0 36px 0 14px;border:1px solid var(--gray-300);border-radius:8px;font-family:var(--font-ui);font-size:16px;color:var(--gray-900);background:#fff url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M28.23 11.3L15.94 23.59L3.65 11.31C3.25 10.97 2.66 10.99 2.29 11.36C1.92 11.73 1.9 12.32 2.24 12.72L15.24 25.72C15.43 25.91 15.68 26.02 15.95 26.02C16.22 26.02 16.47 25.91 16.66 25.72L29.66 12.72C29.85 12.53 29.96 12.28 29.96 12.01C29.96 11.74 29.85 11.49 29.66 11.3C29.47 11.11 29.21 11 28.95 11C28.68 11 28.42 11.11 28.23 11.3Z' fill='%23767676'/%3E%3C/svg%3E") no-repeat right 12px center / 16px 16px;appearance:none;-webkit-appearance:none;outline:none;box-sizing:border-box;}
@@ -434,8 +430,8 @@
                     </div>
                     <span style="width:26px;height:26px;flex:none;border-radius:999px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;"><span style="width:13px;height:13px;background:var(--gray-500);-webkit-mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;"></span></span>
                   </button>
-                  <!-- Expanded content (also shown while collapsing so content stays visible during scale-down) -->
-                  <sc-if value="{{ !ms.collapsed }}">
+                  <!-- Expanded content -->
+                  <sc-if value="{{ ms.expanded }}">
                     <div style="padding:0 18px 8px;">
                       <div style="font-size:13px;color:var(--gray-500);line-height:1.4;">{{ ms.sub }}</div>
                     </div>
@@ -1678,17 +1674,9 @@ class Component extends DCLogic {
   }
   restartA(){ this.setState(()=>({a:{ messages:this.INIT_A.slice(), mode:'input', addressValue:'', chips:[], ctaLabel:'', actionIdx:0, timing:null, screen:'chat', anchor:0, moreBelow:false, spacerH:0, claimed:false, view:'home', expanded:-1 }, ob:{ beat:0 }})); }
   openExplore(){ this.setState(s=>({a:{...s.a, view:'explore'}})); }
-  startCollapse(fromIdx, toIdx){
-    // Play scale-down on fromIdx, then after animation switch to toIdx
-    this.setState(s=>({a:{...s.a, collapsing:fromIdx, expanded:-1}}));
-    setTimeout(()=>{ this.setState(s=>({a:{...s.a, collapsing:-1, expanded:toIdx}})); }, 340);
-  }
-  toggleMs(i){
-    const cur = this.state.a.expanded;
-    if(cur===i){ this.startCollapse(i,-1); } else { this.startCollapse(cur, i); }
-  }
-  prevMs(){ const i=this.state.a.expanded; this.startCollapse(i, Math.max(0,i-1)); }
-  nextMs(){ const i=this.state.a.expanded; this.startCollapse(i, Math.min(this.MS.length-1,i+1)); }
+  toggleMs(i){ this.setState(s=>({a:{...s.a, expanded: s.a.expanded===i ? -1 : i}})); }
+  prevMs(){ this.setState(s=>({a:{...s.a, expanded: Math.max(0, s.a.expanded-1)}})); }
+  nextMs(){ this.setState(s=>({a:{...s.a, expanded: Math.min(this.MS.length-1, s.a.expanded+1)}})); }
   openTool(i){ this.setState(s=>({a:{...s.a, view:'tool', actionIdx:i, askedKeys:[]}}), ()=>{ const el=this.aToolScrollRef.current; if(el) el.scrollTop=0; }); }
   msOfTool(t){ for(let i=0;i<this.MS.length;i++){ if(this.MS[i].actions.some(a=>a.tool===t)) return i; } return -1; }
   backHome(){ this.setState(s=>({a:{...s.a, view:'home', expanded: this.msOfTool(s.a.actionIdx)}})); }
@@ -1943,20 +1931,18 @@ class Component extends DCLogic {
         const PEEK = 78;
         const STEP = 66;
         const BASE = 'position:absolute;left:0;right:0;overflow:hidden;display:flex;flex-direction:column;background:#fff;';
-        const COLTRANS = 'transition:bottom .38s cubic-bezier(0.2,0.8,0.2,1),height .38s cubic-bezier(0.2,0.8,0.2,1),box-shadow .3s ease,border-radius .3s ease;';
+        const TRANS = 'transition:bottom .36s cubic-bezier(0.2,0.8,0.2,1),height .36s cubic-bezier(0.2,0.8,0.2,1),transform .36s cubic-bezier(0.2,0.8,0.2,1),box-shadow .3s ease,border-radius .3s ease;';
         const bottomOf = (i) => (N - 1 - i) * STEP;
         return this.MS.map((m,i)=>{
           const expanded = a.expanded===i;
-          const collapsing = a.collapsing===i;
-          // collapsing: stays at expanded position but plays scale-down class
-          const cardStyle = (expanded || collapsing)
-            ? BASE + `bottom:11%;height:78%;z-index:30;border-radius:20px;box-shadow:0 12px 40px rgba(17,17,22,.28);`
-            : BASE + `bottom:${bottomOf(i)}px;height:${PEEK}px;z-index:${N-i};border-radius:20px 20px 0 0;box-shadow:0 -4px 14px rgba(17,17,22,.11);` + COLTRANS;
-          const animClass = expanded ? 'ms-scale-up' : (collapsing ? 'ms-scale-down' : '');
+          // scale is included in the transition — collapsed=0.85, expanded=1 — CSS interpolates it
+          const cardStyle = expanded
+            ? BASE + TRANS + `bottom:11%;height:78%;z-index:30;border-radius:20px;box-shadow:0 12px 40px rgba(17,17,22,.28);transform:scale(1);transform-origin:bottom center;`
+            : BASE + TRANS + `bottom:${bottomOf(i)}px;height:${PEEK}px;z-index:${N-i};border-radius:20px 20px 0 0;box-shadow:0 -4px 14px rgba(17,17,22,.11);transform:scale(0.93);transform-origin:bottom center;`;
           return {
             name: m.name, sub: m.sub,
-            expanded, collapsed: !expanded && !collapsing,
-            cardStyle, animClass,
+            expanded, collapsed: !expanded,
+            cardStyle, animClass:'',
             onToggle: ()=>this.toggleMs(i),
             hasPrev: i>0, hasNext: i<N-1,
             onPrev: ()=>this.prevMs(), onNext: ()=>this.nextMs(),

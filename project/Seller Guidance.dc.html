@@ -418,56 +418,44 @@
               </div>
             </div>
 
-            <!-- Collapsed milestone list -->
-            <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;">
+            <!-- Milestone stack — absolutely positioned cards -->
+            <div style="position:relative;flex:1;min-height:0;">
               <sc-for list="{{ a.milestones }}" as="ms" hint-placeholder-count="4">
-                <button onClick="{{ ms.onToggle }}" style="width:100%;text-align:left;background:#fff;border:none;border-radius:14px;box-shadow:var(--shadow-sm);padding:14px 16px;cursor:pointer;font-family:var(--font-ui);display:flex;align-items:center;gap:12px;">
-                  <div style="flex:1;">
-                    <div style="font-family:var(--font-brand);font-weight:900;font-size:17px;line-height:1.1;color:var(--gray-950);">{{ ms.name }}</div>
-                    <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">{{ ms.sub }}</div>
-                  </div>
-                  <span style="width:26px;height:26px;flex:none;border-radius:999px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;"><span style="width:13px;height:13px;background:var(--gray-500);-webkit-mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;"></span></span>
-                </button>
+                <div style="{{ ms.cardStyle }}">
+                  <!-- Header — always visible, tappable -->
+                  <button onClick="{{ ms.onToggle }}" style="flex:none;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;padding:14px 18px;display:flex;align-items:center;gap:12px;">
+                    <div style="flex:1;">
+                      <div style="font-family:var(--font-brand);font-weight:900;font-size:18px;line-height:1.1;color:var(--gray-950);">{{ ms.name }}</div>
+                    </div>
+                    <span style="width:26px;height:26px;flex:none;border-radius:999px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;"><span style="width:13px;height:13px;background:var(--gray-500);-webkit-mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;"></span></span>
+                  </button>
+                  <!-- Expanded content -->
+                  <sc-if value="{{ ms.expanded }}">
+                    <div style="padding:0 18px 8px;">
+                      <div style="font-size:13px;color:var(--gray-500);line-height:1.4;">{{ ms.sub }}</div>
+                    </div>
+                    <div class="noscroll" style="flex:1;min-height:0;overflow-y:auto;padding:0 18px;">
+                      <sc-for list="{{ ms.actions }}" as="ac" hint-placeholder-count="4">
+                        <button onClick="{{ ac.onTap }}" style="opacity:{{ ac.tapOpacity }};width:100%;text-align:left;background:transparent;border:none;padding:12px 0;cursor:pointer;font-family:var(--font-ui);display:flex;align-items:center;gap:12px;border-top:1px solid var(--gray-100);">
+                          <span style="flex:1;font-weight:700;font-size:15px;color:var(--gray-950);">{{ ac.label }}</span>
+                          <span style="width:28px;height:28px;flex:none;border-radius:999px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;"><span style="width:14px;height:14px;background:var(--gray-600);-webkit-mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;"></span></span>
+                        </button>
+                      </sc-for>
+                    </div>
+                    <div style="flex:none;display:flex;justify-content:space-between;align-items:center;padding:12px 18px 18px;">
+                      <sc-if value="{{ ms.hasPrev }}">
+                        <button onClick="{{ ms.onPrev }}" style="background:none;border:none;font-family:var(--font-ui);font-size:13px;font-weight:700;color:var(--blue-600);cursor:pointer;padding:0;">← Previous</button>
+                      </sc-if>
+                      <sc-if value="{{ !ms.hasPrev }}"><span></span></sc-if>
+                      <sc-if value="{{ ms.hasNext }}">
+                        <button onClick="{{ ms.onNext }}" style="background:none;border:none;font-family:var(--font-ui);font-size:13px;font-weight:700;color:var(--blue-600);cursor:pointer;padding:0;">Next →</button>
+                      </sc-if>
+                      <sc-if value="{{ !ms.hasNext }}"><span></span></sc-if>
+                    </div>
+                  </sc-if>
+                </div>
               </sc-for>
             </div>
-
-            <!-- Expanded milestone modal overlay -->
-            <sc-if value="{{ a.msModalOpen }}">
-              <div onClick="{{ a.closeMsModal }}" style="position:absolute;inset:0;background:rgba(17,17,22,.5);z-index:50;display:flex;align-items:center;justify-content:center;">
-                <div onClick="{{ a.stopMsProp }}" style="width:88%;max-height:80%;background:#fff;border-radius:20px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 16px 40px rgba(17,17,22,.25);">
-                  <!-- Modal header -->
-                  <div style="padding:20px 20px 12px;display:flex;align-items:flex-start;justify-content:space-between;">
-                    <div>
-                      <div style="font-family:var(--font-brand);font-weight:900;font-size:22px;line-height:1.1;color:var(--gray-950);margin-bottom:4px;">{{ a.msModal.name }}</div>
-                      <div style="font-size:13px;color:var(--gray-600);">{{ a.msModal.sub }}</div>
-                    </div>
-                    <button onClick="{{ a.closeMsModal }}" style="width:30px;height:30px;flex:none;border:none;background:var(--gray-100);border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-left:12px;">
-                      <span style="width:14px;height:14px;background:var(--gray-700);-webkit-mask:var(--ic-IconCloseOutline) center/contain no-repeat;mask:var(--ic-IconCloseOutline) center/contain no-repeat;display:block;"></span>
-                    </button>
-                  </div>
-                  <!-- Action list -->
-                  <div class="noscroll" style="flex:1;overflow-y:auto;padding:0 20px 8px;">
-                    <sc-for list="{{ a.msModal.actions }}" as="ac" hint-placeholder-count="4">
-                      <button onClick="{{ ac.onTap }}" style="opacity:{{ ac.tapOpacity }};width:100%;text-align:left;background:transparent;border:none;padding:12px 2px;cursor:pointer;font-family:var(--font-ui);display:flex;align-items:center;gap:12px;border-top:1px solid var(--gray-100);">
-                        <span style="flex:1;font-weight:700;font-size:15px;color:var(--gray-950);">{{ ac.label }}</span>
-                        <span style="width:28px;height:28px;flex:none;border-radius:999px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;"><span style="width:14px;height:14px;background:var(--gray-600);-webkit-mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;mask:var(--ic-IconChevronRightOutline) center/contain no-repeat;"></span></span>
-                      </button>
-                    </sc-for>
-                  </div>
-                  <!-- Prev / Next nav -->
-                  <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px 20px;">
-                    <sc-if value="{{ a.msModal.hasPrev }}">
-                      <button onClick="{{ a.msModal.onPrev }}" style="background:none;border:none;font-family:var(--font-ui);font-size:13px;font-weight:700;color:var(--blue-600);cursor:pointer;padding:0;">← Previous</button>
-                    </sc-if>
-                    <sc-if value="{{ !a.msModal.hasPrev }}"><span></span></sc-if>
-                    <sc-if value="{{ a.msModal.hasNext }}">
-                      <button onClick="{{ a.msModal.onNext }}" style="background:none;border:none;font-family:var(--font-ui);font-size:13px;font-weight:700;color:var(--blue-600);cursor:pointer;padding:0;">Next →</button>
-                    </sc-if>
-                    <sc-if value="{{ !a.msModal.hasNext }}"><span></span></sc-if>
-                  </div>
-                </div>
-              </div>
-            </sc-if>
           </div>
 
           <!-- FAB -->
@@ -1685,9 +1673,7 @@ class Component extends DCLogic {
   }
   restartA(){ this.setState(()=>({a:{ messages:this.INIT_A.slice(), mode:'input', addressValue:'', chips:[], ctaLabel:'', actionIdx:0, timing:null, screen:'chat', anchor:0, moreBelow:false, spacerH:0, claimed:false, view:'home', expanded:-1 }, ob:{ beat:0 }})); }
   openExplore(){ this.setState(s=>({a:{...s.a, view:'explore'}})); }
-  toggleMs(i){ this.setState(s=>({a:{...s.a, expanded: i}})); }
-  closeMsModal(){ this.setState(s=>({a:{...s.a, expanded:-1}})); }
-  stopMsProp(e){ if(e&&e.stopPropagation) e.stopPropagation(); }
+  toggleMs(i){ this.setState(s=>({a:{...s.a, expanded: s.a.expanded===i ? -1 : i}})); }
   prevMs(){ this.setState(s=>({a:{...s.a, expanded: Math.max(0, s.a.expanded-1)}})); }
   nextMs(){ this.setState(s=>({a:{...s.a, expanded: Math.min(this.MS.length-1, s.a.expanded+1)}})); }
   openTool(i){ this.setState(s=>({a:{...s.a, view:'tool', actionIdx:i, askedKeys:[]}}), ()=>{ const el=this.aToolScrollRef.current; if(el) el.scrollTop=0; }); }
@@ -1879,8 +1865,6 @@ class Component extends DCLogic {
       openHF: () => this.openHF(),
       claimed:a.claimed, planHeading: a.claimed ? 'Your selling plan' : 'How selling works',
       onCta: ()=>this.setA({screen:'action', view:'tool'}),
-      closeMsModal: ()=>this.closeMsModal(),
-      stopMsProp: (e)=>this.stopMsProp(e),
       openChat: ()=>this.setA({screen:'chat'}),
       closeChat: ()=>this.closeChat(),
       closeChatToComps: ()=>this.closeChatToComps(),
@@ -1941,23 +1925,33 @@ class Component extends DCLogic {
       saleVal:sale, mortVal:mort, onSale:(e)=>this.onSale(e), onMortgage:(e)=>this.onMortgage(e),
       saleStr:fmt(sale), mortStr:fmt(mort), closingStr:fmt(closing), netStr:fmt(net),
       salePct:salePct+'%', mortPct:mortPct+'%',
-      msModalOpen: a.expanded>=0,
-      msModal: (()=>{
-        if(a.expanded<0) return {};
-        const i=a.expanded; const m=this.MS[i];
-        return {
-          name:m.name, sub:m.sub,
-          hasPrev: i>0, hasNext: i<this.MS.length-1,
-          onPrev:()=>this.prevMs(), onNext:()=>this.nextMs(),
-          actions: m.actions.map((ac,ai)=>({ label:ac.label, tapOpacity:(ac.tool!=null?'1':'.55'), onTap: ac.tool!=null ? (()=>this.openTool(ac.tool)) : (()=>{}) }))
-        };
-      })(),
-      milestones: this.MS.map((m,i)=>{
-        return {
-          name:m.name, sub:m.sub,
-          onToggle:()=>this.toggleMs(i)
-        };
-      })
+      milestones: (()=>{
+        const N = this.MS.length;
+        const PEEK = 52; // px — height of a collapsed card header strip
+        const GAP = 8;   // gap between collapsed strips
+        // bottom offsets: card 0 (bottom of stack) sits lowest, card N-1 sits highest
+        // stack reads bottom-to-top: card 3 peek at bottom, card 0 peek near top
+        // We want collapsed cards anchored from the bottom of the container
+        const bottomOf = (i) => (N - 1 - i) * (PEEK + GAP);
+        return this.MS.map((m,i)=>{
+          const expanded = a.expanded===i;
+          const anyExp = a.expanded>=0;
+          // collapsed: fixed strip at its stack position
+          // expanded: centered vertically, tall, high z
+          const cardStyle = expanded
+            ? 'position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:78%;z-index:30;border-radius:20px;background:#fff;box-shadow:0 12px 40px rgba(17,17,22,.28);overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s ease;'
+            : `position:absolute;left:0;right:0;bottom:${bottomOf(i)}px;height:${PEEK}px;z-index:${i+1};border-radius:20px;background:#fff;box-shadow:0 -4px 12px rgba(17,17,22,.10);overflow:hidden;transition:box-shadow .2s ease;`;
+          return {
+            name: m.name, sub: m.sub,
+            expanded, collapsed: !expanded,
+            cardStyle,
+            onToggle: ()=>this.toggleMs(i),
+            hasPrev: i>0, hasNext: i<N-1,
+            onPrev: ()=>this.prevMs(), onNext: ()=>this.nextMs(),
+            actions: m.actions.map((ac)=>({ label:ac.label, tapOpacity:(ac.tool!=null?'1':'.55'), onTap: ac.tool!=null ? (()=>this.openTool(ac.tool)) : (()=>{}) }))
+          };
+        });
+      })()
     };
 
     // ---- B ----

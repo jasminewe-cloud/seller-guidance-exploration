@@ -423,8 +423,8 @@
                 </div>
               </div>
 
-            <!-- Milestone stack — absolutely positioned cards -->
-            <div style="position:relative;flex:1;min-height:0;">
+            <!-- Milestone stack — fixed height: (N-1)*STEP + PEEK = 3*66+78 = 276px -->
+            <div style="position:relative;flex:none;height:276px;">
               <sc-for list="{{ a.milestones }}" as="ms" hint-placeholder-count="4">
                 <div class="{{ ms.animClass }}" style="{{ ms.cardStyle }}">
                   <!-- Header — always visible, tappable -->
@@ -464,23 +464,25 @@
             </div>
 
             </div><!-- end scrollable content wrapper -->
+
+            <!-- bottom nav — inside overlay so it stays visible -->
+            <div style="flex:none;display:flex;justify-content:space-around;align-items:center;padding:8px 8px 22px;border-top:1px solid var(--border-subtle);background:#fff;">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--gray-600);"><span style="width:24px;height:24px;background:var(--gray-600);-webkit-mask:var(--ic-IconSearchOutline) center/contain no-repeat;mask:var(--ic-IconSearchOutline) center/contain no-repeat;"></span><span style="font-size:11px;font-weight:600;">Search</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--gray-600);"><span style="width:24px;height:24px;background:var(--gray-600);-webkit-mask:var(--ic-IconLightningOutline) center/contain no-repeat;mask:var(--ic-IconLightningOutline) center/contain no-repeat;"></span><span style="font-size:11px;font-weight:600;">Updates</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--gray-600);"><span style="width:24px;height:24px;background:var(--gray-600);-webkit-mask:var(--ic-IconHeartOutline) center/contain no-repeat;mask:var(--ic-IconHeartOutline) center/contain no-repeat;"></span><span style="font-size:11px;font-weight:600;">Saved</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--blue-600);"><span style="width:30px;height:30px;border-radius:9px;background:var(--blue-600);display:flex;align-items:center;justify-content:center;"><span style="width:18px;height:18px;background:#fff;-webkit-mask:var(--ic-IconCheckmarkOutline) center/contain no-repeat;mask:var(--ic-IconCheckmarkOutline) center/contain no-repeat;"></span></span><span style="font-size:11px;font-weight:700;">Plan</span></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--gray-600);"><span style="width:24px;height:24px;background:var(--gray-600);-webkit-mask:var(--ic-IconInboxOutline) center/contain no-repeat;mask:var(--ic-IconInboxOutline) center/contain no-repeat;"></span><span style="font-size:11px;font-weight:600;">Inbox</span></div>
+            </div>
+
           </div><!-- end hero+content outer -->
 
-          <!-- FAB -->
-          <div style="position:absolute;right:20px;bottom:82px;z-index:20;">
-            <button onClick="{{ a.openChat }}" style="width:56px;height:56px;border-radius:999px;background:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(59,7,100,.35);">
-              <span style="width:32px;height:32px;background:#3B0764;-webkit-mask:var(--ic-IconSparkleOutline) center/contain no-repeat;mask:var(--ic-IconSparkleOutline) center/contain no-repeat;display:block;"></span>
+          <!-- FAB — smaller, above toolbar -->
+          <div style="position:absolute;right:16px;bottom:76px;z-index:20;">
+            <button onClick="{{ a.openChat }}" style="width:44px;height:44px;border-radius:999px;background:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(59,7,100,.32);">
+              <span style="width:24px;height:24px;background:#3B0764;-webkit-mask:var(--ic-IconSparkleOutline) center/contain no-repeat;mask:var(--ic-IconSparkleOutline) center/contain no-repeat;display:block;"></span>
             </button>
           </div>
 
-          <!-- bottom nav -->
-          <div style="flex:none;display:flex;justify-content:space-around;align-items:center;padding:8px 8px 22px;border-top:1px solid var(--border-subtle);background:#fff;">
-            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--gray-600);"><span style="width:24px;height:24px;background:var(--gray-600);-webkit-mask:var(--ic-IconSearchOutline) center/contain no-repeat;mask:var(--ic-IconSearchOutline) center/contain no-repeat;"></span><span style="font-size:11px;font-weight:600;">Search</span></div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--gray-600);"><span style="width:24px;height:24px;background:var(--gray-600);-webkit-mask:var(--ic-IconLightningOutline) center/contain no-repeat;mask:var(--ic-IconLightningOutline) center/contain no-repeat;"></span><span style="font-size:11px;font-weight:600;">Updates</span></div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--gray-600);"><span style="width:24px;height:24px;background:var(--gray-600);-webkit-mask:var(--ic-IconHeartOutline) center/contain no-repeat;mask:var(--ic-IconHeartOutline) center/contain no-repeat;"></span><span style="font-size:11px;font-weight:600;">Saved</span></div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--blue-600);"><span style="width:30px;height:30px;border-radius:9px;background:var(--blue-600);display:flex;align-items:center;justify-content:center;"><span style="width:18px;height:18px;background:#fff;-webkit-mask:var(--ic-IconCheckmarkOutline) center/contain no-repeat;mask:var(--ic-IconCheckmarkOutline) center/contain no-repeat;"></span></span><span style="font-size:11px;font-weight:700;">Plan</span></div>
-            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--gray-600);"><span style="width:24px;height:24px;background:var(--gray-600);-webkit-mask:var(--ic-IconInboxOutline) center/contain no-repeat;mask:var(--ic-IconInboxOutline) center/contain no-repeat;"></span><span style="font-size:11px;font-weight:600;">Inbox</span></div>
-          </div>
         </div>
 
         <!-- CHAT SHEET overlay -->

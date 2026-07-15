@@ -366,13 +366,15 @@
             </div>
           </sc-if>
 
-          <!-- behind-scrim: milestone list (+ home hero once claimed) -->
-          <div class="noscroll" style="position:relative;z-index:0;flex:1;min-height:0;overflow:hidden;background:var(--gray-50);padding:16px 16px 0;display:flex;flex-direction:column;gap:12px;">
+          <!-- behind-scrim: hero (full-bleed, claimed only) + scrollable content below -->
+          <div class="noscroll" style="position:relative;z-index:0;flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;background:var(--gray-50);">
+
+            <!-- Hero image — full-bleed, no side padding, only when claimed -->
             <sc-if value="{{ a.claimed }}">
-              <div style="flex:none;position:relative;border-radius:16px;overflow:hidden;box-shadow:var(--shadow-sm);">
-                <img src="assets/home-photo.png" alt="Your home" style="display:block;width:100%;height:172px;object-fit:cover;" />
-                <div style="position:absolute;top:10px;left:10px;background:rgba(255,255,255,.92);color:var(--gray-900);font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;"><span style="width:12px;height:12px;background:var(--green-600);-webkit-mask:var(--ic-IconCheckmarkCircleFilled) center/contain no-repeat;mask:var(--ic-IconCheckmarkCircleFilled) center/contain no-repeat;"></span>Your home</div>
-                <div style="position:absolute;left:0;right:0;bottom:0;padding:26px 14px 12px;background:linear-gradient(to top, rgba(17,17,22,.78), rgba(17,17,22,0));color:#fff;">
+              <div style="flex:none;position:relative;overflow:hidden;">
+                <img src="assets/home-photo.png" alt="Your home" style="display:block;width:100%;height:186px;object-fit:cover;" />
+                <div style="position:absolute;top:10px;left:12px;background:rgba(255,255,255,.92);color:var(--gray-900);font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:5px;"><span style="width:12px;height:12px;background:var(--green-600);-webkit-mask:var(--ic-IconCheckmarkCircleFilled) center/contain no-repeat;mask:var(--ic-IconCheckmarkCircleFilled) center/contain no-repeat;"></span>Your home</div>
+                <div style="position:absolute;left:0;right:0;bottom:0;padding:32px 14px 12px;background:linear-gradient(to top, rgba(17,17,22,.80), rgba(17,17,22,0));color:#fff;">
                   <div style="font-family:var(--font-brand);font-weight:900;font-size:24px;line-height:1.05;">{{ a.heroZest }}</div>
                   <div style="font-size:13px;opacity:.92;margin-top:2px;">{{ a.heroShort }}, Austin, TX</div>
                   <div style="font-size:12px;opacity:.82;margin-top:1px;">{{ a.heroStatsCard }}</div>
@@ -380,43 +382,46 @@
               </div>
             </sc-if>
 
-            <div style="display:flex;align-items:center;gap:6px;padding:2px 2px 4px;">
-              <h3 style="font-family:var(--font-brand);font-weight:900;font-size:20px;line-height:1.1;margin:0;">{{ a.planHeading }}</h3>
-              <span style="width:19px;height:19px;background:var(--gray-900);-webkit-mask:var(--ic-IconChevronDownOutline) center/contain no-repeat;mask:var(--ic-IconChevronDownOutline) center/contain no-repeat;"></span>
-            </div>
+            <!-- Scrollable content below hero -->
+            <div style="flex:1;min-height:0;display:flex;flex-direction:column;gap:12px;padding:14px 16px 0;">
 
-            <!-- Insight cards feed -->
-            <div style="flex:none;margin:0 -16px;">
-              <div class="noscroll" id="insightScroll" style="display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px 0;-webkit-overflow-scrolling:touch;">
-                <!-- Card 1 -->
-                <div style="flex:none;width:calc(100% - 32px);scroll-snap-align:start;background:#3B0764;border-radius:16px;padding:16px;display:flex;align-items:flex-start;gap:12px;">
-                  <div style="flex:none;width:34px;height:34px;border-radius:999px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;">
-                    <span style="width:18px;height:18px;background:#fff;-webkit-mask:var(--ic-IconSparkleOutline) center/contain no-repeat;mask:var(--ic-IconSparkleOutline) center/contain no-repeat;display:block;"></span>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <h3 style="font-family:var(--font-brand);font-weight:900;font-size:20px;line-height:1.1;margin:0;">{{ a.planHeading }}</h3>
+                <span style="width:19px;height:19px;background:var(--gray-900);-webkit-mask:var(--ic-IconChevronDownOutline) center/contain no-repeat;mask:var(--ic-IconChevronDownOutline) center/contain no-repeat;"></span>
+              </div>
+
+              <!-- Insight cards feed -->
+              <div style="flex:none;margin:0 -16px;">
+                <div class="noscroll" id="insightScroll" style="display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 16px;-webkit-overflow-scrolling:touch;">
+                  <!-- Card 1 -->
+                  <div style="flex:none;width:calc(100% - 32px);scroll-snap-align:start;background:#3B0470;border-radius:16px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;min-height:100px;">
+                    <div style="flex:none;width:28px;height:28px;border-radius:999px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin-top:1px;">
+                      <span style="width:14px;height:14px;background:#fff;-webkit-mask:var(--ic-IconSparkleOutline) center/contain no-repeat;mask:var(--ic-IconSparkleOutline) center/contain no-repeat;display:block;"></span>
+                    </div>
+                    <p style="font-family:var(--font-ui);font-size:14px;color:#fff;line-height:1.5;margin:0;flex:1;">Your Zestimate has grown <strong>4.2% this year</strong>. That's real equity you can put toward your next move.</p>
                   </div>
-                  <p style="font-family:var(--font-ui);font-size:14px;color:#fff;line-height:1.5;margin:0;flex:1;">Your Zestimate has grown <strong>4.2% this year</strong>. That's real equity you can put toward your next move.</p>
+                  <!-- Card 2 -->
+                  <div style="flex:none;width:calc(100% - 32px);scroll-snap-align:start;background:#3B0470;border-radius:16px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;min-height:100px;">
+                    <div style="flex:none;width:28px;height:28px;border-radius:999px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin-top:1px;">
+                      <span style="width:14px;height:14px;background:#fff;-webkit-mask:var(--ic-IconTrendingOutline) center/contain no-repeat;mask:var(--ic-IconTrendingOutline) center/contain no-repeat;display:block;"></span>
+                    </div>
+                    <p style="font-family:var(--font-ui);font-size:14px;color:#fff;line-height:1.5;margin:0;flex:1;">Homes near you are selling in <strong>28 days on average</strong>. It's a strong seller's market right now.</p>
+                  </div>
+                  <!-- Card 3 -->
+                  <div style="flex:none;width:calc(100% - 32px);scroll-snap-align:start;background:#3B0470;border-radius:16px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;min-height:100px;">
+                    <div style="flex:none;width:28px;height:28px;border-radius:999px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;margin-top:1px;">
+                      <span style="width:14px;height:14px;background:#fff;-webkit-mask:var(--ic-IconDollarSignCircleOutline) center/contain no-repeat;mask:var(--ic-IconDollarSignCircleOutline) center/contain no-repeat;display:block;"></span>
+                    </div>
+                    <p style="font-family:var(--font-ui);font-size:14px;color:#fff;line-height:1.5;margin:0;flex:1;">Based on current market data, you could walk away with around <strong>$504K after costs</strong>.</p>
+                  </div>
                 </div>
-                <!-- Card 2 -->
-                <div style="flex:none;width:calc(100% - 32px);scroll-snap-align:start;background:#3B0764;border-radius:16px;padding:16px;display:flex;align-items:flex-start;gap:12px;">
-                  <div style="flex:none;width:34px;height:34px;border-radius:999px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;">
-                    <span style="width:18px;height:18px;background:#fff;-webkit-mask:var(--ic-IconTrendingOutline) center/contain no-repeat;mask:var(--ic-IconTrendingOutline) center/contain no-repeat;display:block;"></span>
-                  </div>
-                  <p style="font-family:var(--font-ui);font-size:14px;color:#fff;line-height:1.5;margin:0;flex:1;">Homes near you are selling in <strong>28 days on average</strong>. It's a strong seller's market right now.</p>
-                </div>
-                <!-- Card 3 -->
-                <div style="flex:none;width:calc(100% - 32px);scroll-snap-align:start;background:#3B0764;border-radius:16px;padding:16px;display:flex;align-items:flex-start;gap:12px;">
-                  <div style="flex:none;width:34px;height:34px;border-radius:999px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;">
-                    <span style="width:18px;height:18px;background:#fff;-webkit-mask:var(--ic-IconDollarSignCircleOutline) center/contain no-repeat;mask:var(--ic-IconDollarSignCircleOutline) center/contain no-repeat;display:block;"></span>
-                  </div>
-                  <p style="font-family:var(--font-ui);font-size:14px;color:#fff;line-height:1.5;margin:0;flex:1;">Based on current market data, you could walk away with around <strong>$504K after costs</strong>.</p>
+                <!-- Pagination dots -->
+                <div style="display:flex;justify-content:center;gap:6px;padding:8px 0 2px;">
+                  <span id="dot0" style="width:6px;height:6px;border-radius:999px;background:#3B0470;display:block;"></span>
+                  <span id="dot1" style="width:6px;height:6px;border-radius:999px;background:var(--gray-300);display:block;"></span>
+                  <span id="dot2" style="width:6px;height:6px;border-radius:999px;background:var(--gray-300);display:block;"></span>
                 </div>
               </div>
-              <!-- Pagination dots -->
-              <div style="display:flex;justify-content:center;gap:6px;padding:10px 0 4px;">
-                <span id="dot0" style="width:6px;height:6px;border-radius:999px;background:#3B0764;display:block;"></span>
-                <span id="dot1" style="width:6px;height:6px;border-radius:999px;background:var(--gray-300);display:block;"></span>
-                <span id="dot2" style="width:6px;height:6px;border-radius:999px;background:var(--gray-300);display:block;"></span>
-              </div>
-            </div>
 
             <!-- Milestone stack — absolutely positioned cards -->
             <div style="position:relative;flex:1;min-height:0;">
@@ -457,7 +462,9 @@
                 </div>
               </sc-for>
             </div>
-          </div>
+
+            </div><!-- end scrollable content wrapper -->
+          </div><!-- end hero+content outer -->
 
           <!-- FAB -->
           <div style="position:absolute;right:20px;bottom:82px;z-index:20;">
@@ -2265,7 +2272,7 @@ class Component extends DCLogic {
     var dots = [document.getElementById('dot0'), document.getElementById('dot1'), document.getElementById('dot2')];
     el.addEventListener('scroll', function(){
       var idx = Math.round(el.scrollLeft / el.offsetWidth);
-      dots.forEach(function(d,i){ d.style.background = i===idx ? '#3B0764' : 'var(--gray-300)'; });
+      dots.forEach(function(d,i){ d.style.background = i===idx ? '#3B0470' : 'var(--gray-300)'; });
     }, {passive:true});
   }
   if(document.readyState === 'loading'){

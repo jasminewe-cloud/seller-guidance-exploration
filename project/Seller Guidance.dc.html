@@ -367,7 +367,7 @@
           </sc-if>
 
           <!-- behind-scrim: hero (full-bleed, claimed only) + scrollable content below -->
-          <div class="noscroll" style="position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;background:var(--gray-50);">
+          <div class="noscroll" style="position:absolute;inset:0;z-index:1;overflow:hidden;display:flex;flex-direction:column;background:var(--gray-50);">
 
             <!-- Hero image — full-bleed to very top, only when claimed -->
             <sc-if value="{{ a.claimed }}">
@@ -423,8 +423,8 @@
                 </div>
               </div>
 
-            <!-- Milestone stack — fills remaining space, overflow:visible lets expanded card breathe -->
-            <div style="position:relative;flex:1;min-height:276px;overflow:visible;margin-top:8px;">
+            <!-- Milestone stack — fills remaining space -->
+            <div style="position:relative;flex:1;min-height:276px;">
               <sc-for list="{{ a.milestones }}" as="ms" hint-placeholder-count="4">
                 <div class="{{ ms.animClass }}" style="{{ ms.cardStyle }}">
                   <!-- Header — always visible, tappable -->
@@ -437,9 +437,7 @@
                   </button>
                   <!-- Expanded content -->
                   <sc-if value="{{ ms.expanded }}">
-                    <div style="padding:0 18px 8px;">
-                      <div style="font-size:13px;color:var(--gray-500);line-height:1.4;">{{ ms.sub }}</div>
-                    </div>
+                    <div style="height:1px;flex:none;background:var(--gray-100);margin:0 18px;"></div>
                     <div class="noscroll" style="flex:1;min-height:0;overflow-y:auto;padding:0 18px;">
                       <sc-for list="{{ ms.actions }}" as="ac" hint-placeholder-count="4">
                         <button onClick="{{ ac.onTap }}" style="opacity:{{ ac.tapOpacity }};width:100%;text-align:left;background:transparent;border:none;padding:12px 0;cursor:pointer;font-family:var(--font-ui);display:flex;align-items:center;gap:12px;border-top:1px solid var(--gray-100);">

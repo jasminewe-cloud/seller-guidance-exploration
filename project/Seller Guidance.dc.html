@@ -367,7 +367,7 @@
           </sc-if>
 
           <!-- behind-scrim: hero (full-bleed, claimed only) + scrollable content below -->
-          <div class="noscroll" style="position:absolute;inset:0;z-index:1;overflow:hidden;display:flex;flex-direction:column;background:var(--gray-50);">
+          <div class="noscroll" style="position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;background:var(--gray-50);">
 
             <!-- Hero image — full-bleed to very top, only when claimed -->
             <sc-if value="{{ a.claimed }}">
@@ -423,8 +423,8 @@
                 </div>
               </div>
 
-            <!-- Milestone stack — fixed height: (N-1)*STEP + PEEK = 3*66+78 = 276px -->
-            <div style="position:relative;flex:none;height:276px;">
+            <!-- Milestone stack — fills remaining space, overflow:visible lets expanded card breathe -->
+            <div style="position:relative;flex:1;min-height:276px;overflow:visible;margin-top:8px;">
               <sc-for list="{{ a.milestones }}" as="ms" hint-placeholder-count="4">
                 <div class="{{ ms.animClass }}" style="{{ ms.cardStyle }}">
                   <!-- Header — always visible, tappable -->

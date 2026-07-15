@@ -1809,7 +1809,7 @@ class Component extends DCLogic {
     }
     let altOverride = null;
     if(a.view==='tool' && a.actionIdx===2){
-      recNext = { prep:false, idx:3, name:'Prepare to list', btn:'Find an agent', why:"You've sized up your numbers. Next, find the right agent to take your home to market.", go:()=>this.gotoTool(3) };
+      recNext = { prep:false, idx:3, name:'Prepare to list', btn:'Start preparing', why:"You've sized up your numbers. Next, find the right agent to take your home to market.", go:()=>this.gotoTool(3) };
       bottomRecNext = recNext;
     }
     if(a.view==='tool' && a.actionIdx===3){

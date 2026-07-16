@@ -16,6 +16,13 @@
   .noscroll::-webkit-scrollbar{display:none;}
   .noscroll{scrollbar-width:none;}
   @keyframes vfade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes chatGlow{0%,100%{box-shadow:0 0 0 rgba(59,4,112,0);}50%{box-shadow:0 0 10px 2px rgba(59,4,112,0.22);}}
+  .chat-glow{border-color:rgba(59,4,112,0.45) !important;animation:chatGlow 1.1s ease-in-out 3;}
+  @keyframes statPop{0%,100%{transform:scale(1);}50%{transform:scale(1.22);}}
+  .stat-pop{display:inline-block;animation:statPop 550ms cubic-bezier(.25,.46,.45,.94) both;}
+  @keyframes zcardGlowPulse{0%{box-shadow:0 0 0 0 rgba(19,111,101,0);}40%{box-shadow:0 0 0 10px rgba(19,111,101,0.45);}100%{box-shadow:0 0 0 0 rgba(19,111,101,0);}}
+  .zcard-glow{animation:zcardGlowPulse 900ms ease-out both;}
+  @keyframes sheetDown{from{transform:translateY(0);}to{transform:translateY(100%);}}
   @keyframes beatIn{from{opacity:0;transform:translateX(40px);}to{opacity:1;transform:translateX(0);}}
   .beat-screen{animation:beatIn 360ms cubic-bezier(.25,.46,.45,.94) both;}
   @keyframes cardLift{from{opacity:0;transform:translateY(80px) scale(1.1);}to{opacity:1;transform:translateY(0) scale(1);}}
@@ -146,7 +153,7 @@
                   <p style="font-family:var(--font-ui);font-size:13px;line-height:1.4;color:var(--gray-600);margin:0 0 28px;">I'll pull in your home's details so everything I show you is specific to you.</p>
 
                   <!-- Address field: location icon on left, placeholder always visible, gray bg distinguishes it from cards -->
-                  <div style="display:flex;align-items:center;gap:10px;background:#f4f4f6;border:1.5px solid #e0e0e0;border-radius:12px;padding:13px 16px;margin-bottom:16px;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #e0e0e0;border-radius:12px;padding:13px 16px;margin-bottom:16px;min-width:0;">
                     <button onClick="{{ ob.useLocation }}" style="width:20px;height:20px;flex:none;background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;">
                       <span style="width:18px;height:18px;background:var(--blue-600);-webkit-mask:var(--ic-IconLocationArrowOutline) center/contain no-repeat;mask:var(--ic-IconLocationArrowOutline) center/contain no-repeat;display:block;"></span>
                     </button>
@@ -487,7 +494,8 @@
         <sc-if value="{{ a.chat }}" hint-placeholder-val="{{ true }}">
           <div onClick="{{ a.closeChat }}" style="position:absolute;inset:0;background:rgba(17,17,22,.4);z-index:40;"></div>
           <div style="position:absolute;left:0;right:0;bottom:0;height:auto;max-height:78%;z-index:41;background:#fff;border-radius:26px 26px 0 0;box-shadow:0 -14px 40px rgba(17,17,22,.2);display:flex;flex-direction:column;overflow:hidden;animation:{{ a.chatAnim }};">
-            <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid var(--border-subtle);">
+            <div style="flex:none;display:flex;justify-content:center;padding:10px 0 2px;"><div style="width:36px;height:4px;background:var(--gray-300);border-radius:999px;"></div></div>
+            <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:10px 18px 12px;border-bottom:1px solid var(--border-subtle);">
               <div style="display:flex;align-items:center;gap:10px;">
                 <div style="width:34px;height:34px;border-radius:999px;background:var(--gray-950);display:flex;align-items:center;justify-content:center;"><span style="width:18px;height:18px;background:#fff;-webkit-mask:var(--ic-IconSparkleOutline) center/contain no-repeat;mask:var(--ic-IconSparkleOutline) center/contain no-repeat;"></span></div>
                 <div><div style="font-weight:700;font-size:16px;line-height:1.1;">{{ vName }}</div><div style="font-size:12px;color:var(--green-600);font-weight:600;">Your selling guide</div></div>
@@ -565,6 +573,9 @@
                   </sc-for>
                 </div>
               </sc-if>
+              <sc-if value="{{ a.showReadyNudge }}">
+                <div style="padding:4px 16px 6px;font-family:var(--font-ui);font-size:11px;font-weight:600;color:var(--gray-400);">Let me know when you're ready to move on</div>
+              </sc-if>
               <!-- alt pills bar: replaces follow-up chips when user is done -->
               <sc-if value="{{ a.showAltPillsBar }}">
                 <div style="padding:10px 16px 4px;">
@@ -604,14 +615,14 @@
         <sc-if value="{{ a.viewTool }}">
           <div style="position:absolute;inset:0;z-index:46;background:var(--gray-50);">
             <button onClick="{{ a.backHome }}" style="position:absolute;top:52px;left:14px;z-index:3;width:40px;height:40px;border:none;background:rgba(255,255,255,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:999px;box-shadow:var(--shadow-sm);cursor:pointer;display:flex;align-items:center;justify-content:center;"><span style="width:20px;height:20px;background:var(--gray-900);-webkit-mask:var(--ic-IconChevronLeftOutline) center/contain no-repeat;mask:var(--ic-IconChevronLeftOutline) center/contain no-repeat;"></span></button>
-            <div ref="{{ a.toolScrollRef }}" class="noscroll" style="position:absolute;top:0;left:0;right:0;bottom:68px;overflow-y:auto;">
+            <div ref="{{ a.toolScrollRef }}" data-tool-scroll onScroll="{{ a.toolScrollOnScroll }}" class="noscroll" style="position:absolute;top:0;left:0;right:0;bottom:68px;overflow-y:auto;">
               <!-- Home hero with overlay -->
               <div style="position:relative;">
                 <img src="assets/home-photo.png" alt="Your home" style="display:block;width:100%;height:220px;object-fit:cover;" />
                 <div style="position:absolute;inset:0;background:linear-gradient(to bottom, transparent 40%, rgba(0,0,0,.72) 100%);"></div>
                 <div style="position:absolute;bottom:0;left:0;right:0;padding:16px 16px 18px;">
                   <div style="font-family:var(--font-brand);font-weight:900;font-size:22px;color:#fff;line-height:1.1;margin-bottom:4px;">{{ a.heroShort }}</div>
-                  <div style="font-family:var(--font-ui);font-size:13px;color:rgba(255,255,255,.85);">{{ a.heroCity }} &nbsp;·&nbsp; {{ hf.heroLine }}</div>
+                  <div style="font-family:var(--font-ui);font-size:13px;color:rgba(255,255,255,.85);">{{ a.heroCity }} &nbsp;·&nbsp; {{ hf.fields.beds }} bd · {{ hf.fields.baths }} ba · <span class="{{ hf.heroSqftClass }}" style="{{ hf.sqftCountStyle }}">{{ hf.fields.sqft }} sqft</span></div>
                 </div>
               </div>
               <div style="padding:14px 14px 28px;display:flex;flex-direction:column;gap:14px;">
@@ -637,12 +648,12 @@
                     </div>
                   </div>
                 </sc-if>
-                <div style="background:#136F65;border-radius:18px;padding:20px 20px 18px;">
+                <div class="{{ hf.flashZcard ? 'zcard-glow' : '' }}" style="background:#136F65;border-radius:18px;padding:20px 20px 18px;">
                   <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
                     <span style="font-family:var(--font-ui);font-size:13px;color:rgba(255,255,255,.7);">Zestimate®</span>
                     <span style="width:14px;height:14px;background:rgba(255,255,255,.5);-webkit-mask:var(--ic-IconInfoOutline) center/contain no-repeat;mask:var(--ic-IconInfoOutline) center/contain no-repeat;"></span>
                   </div>
-                  <div style="font-family:var(--font-brand);font-weight:900;font-size:38px;color:#fff;line-height:1.05;margin-bottom:14px;">$1,695,000</div>
+                  <div style="font-family:var(--font-brand);font-weight:900;font-size:38px;color:{{ hf.zestCountColor }};line-height:1.05;margin-bottom:14px;transition:color 300ms;">{{ hf.zestimateFmt }}</div>
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                     <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:11px;">
                       <div style="font-family:var(--font-ui);font-size:12px;color:rgba(255,255,255,.6);margin-bottom:3px;">30-day change</div>
@@ -650,7 +661,7 @@
                     </div>
                     <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:11px;">
                       <div style="font-family:var(--font-ui);font-size:12px;color:rgba(255,255,255,.6);margin-bottom:3px;">Zestimate per sqft</div>
-                      <div style="font-family:var(--font-ui);font-weight:700;font-size:15px;color:#fff;">{{ hf.zPerSqft }}</div>
+                      <div style="font-family:var(--font-ui);font-weight:700;font-size:15px;color:{{ hf.zestCountColor }};transition:color 300ms;">{{ hf.zPerSqft }}</div>
                     </div>
                   </div>
                   <div style="background:rgba(255,255,255,.12);border-radius:12px;padding:11px;margin-bottom:14px;">
@@ -679,7 +690,7 @@
                 <div style="background:#fff;border-radius:16px;box-shadow:var(--shadow-sm);padding:20px;">
                   <div style="font-family:var(--font-brand);font-weight:900;font-size:20px;color:var(--gray-950);margin-bottom:14px;">Your Zestimate Tools</div>
                   <div style="height:1px;background:var(--gray-200);margin-bottom:16px;"></div>
-                  <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;">
+                  <div id="home-facts-anchor" style="display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32" style="flex:none;margin-top:1px;" fill="#111"><circle cx="4" cy="9" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="4" cy="23" r="2"/><rect x="9" y="7.5" width="19" height="3" rx="1.5"/><rect x="9" y="14.5" width="19" height="3" rx="1.5"/><rect x="9" y="21.5" width="19" height="3" rx="1.5"/></svg>
                     <div>
                       <div style="font-family:var(--font-ui);font-weight:700;font-size:16px;color:var(--gray-950);margin-bottom:4px;">Review Your Home Facts</div>
@@ -718,6 +729,16 @@
                     </button>
                   </div>
                 </div>
+              </sc-if>
+              <!-- Check-in: below comps card, only after home facts updated -->
+              <sc-if value="{{ a.factsUpdated }}">
+                <button onClick="{{ a.openChatReady }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:12px;padding:12px 14px;cursor:pointer;">
+                  <div style="display:flex;align-items:center;gap:9px;">
+                    <div style="width:22px;height:22px;flex:none;border-radius:999px;background:var(--gray-950);display:flex;align-items:center;justify-content:center;"><span style="width:11px;height:11px;background:#fff;-webkit-mask:var(--ic-IconSparkleOutline) center/contain no-repeat;mask:var(--ic-IconSparkleOutline) center/contain no-repeat;"></span></div>
+                    <span style="font-family:var(--font-ui);font-size:13px;font-weight:700;color:var(--gray-900);">Ready to move on?</span>
+                  </div>
+                  <span style="font-family:var(--font-ui);font-size:13px;font-weight:700;color:var(--blue-600);">Let's go →</span>
+                </button>
               </sc-if>
 
               <!-- TOOL 1: Track the market -->
@@ -916,8 +937,8 @@
             </div>
             <!-- Persistent chat bar -->
             <div style="position:absolute;bottom:0;left:0;right:0;height:68px;background:#fff;border-top:1px solid var(--border-subtle);display:flex;gap:8px;align-items:center;padding:0 16px 10px;">
-              <div style="flex:1;display:flex;align-items:center;background:#fff;border:1px solid var(--gray-300);border-radius:999px;padding:0 8px 0 16px;">
-                <input value="{{ hf.vchat.chatValue }}" onInput="{{ hf.vchat.onInput }}" onKeyDown="{{ hf.vchat.onKey }}" placeholder="Ask about your home value…" style="flex:1;font-family:var(--font-ui);font-size:15px;color:var(--gray-950);background:transparent;border:none;padding:11px 6px 11px 0;outline:none;" />
+              <div class="{{ a.actionChatGlowClass }}" style="flex:1;display:flex;align-items:center;background:#fff;border:1px solid var(--gray-300);border-radius:999px;padding:0 8px 0 16px;">
+                <input value="{{ hf.vchat.chatValue }}" onInput="{{ hf.vchat.onInput }}" onKeyDown="{{ hf.vchat.onKey }}" placeholder="{{ a.actionChatPlaceholder }}" style="flex:1;font-family:var(--font-ui);font-size:15px;color:var(--gray-950);background:transparent;border:none;padding:11px 6px 11px 0;outline:none;" />
               </div>
               <button onClick="{{ hf.vchat.onSend }}" style="width:40px;height:40px;flex:none;border-radius:999px;border:none;background:var(--blue-600);cursor:pointer;display:flex;align-items:center;justify-content:center;"><span style="width:18px;height:18px;background:#fff;-webkit-mask:var(--ic-IconArrowUpOutline) center/contain no-repeat;mask:var(--ic-IconArrowUpOutline) center/contain no-repeat;"></span></button>
             </div>
@@ -1122,23 +1143,26 @@
         <!-- Voyager Home Facts Chat Overlay -->
         <sc-if value="{{ hf.vchat.vchatVisible }}">
           <!-- Backdrop -->
-          <div onClick="{{ hf.vchat.close }}" style="position:absolute;inset:0;z-index:299;background:rgba(0,0,0,.45);transition:opacity 320ms ease;opacity:{{ hf.vchat.backdropOpacity }};"></div>
+          <div onClick="{{ hf.vchat.close }}" style="position:absolute;inset:0;z-index:299;background:rgba(0,0,0,.45);transition:opacity 320ms ease;opacity:{{ hf.vchat.backdropOpacity }};pointer-events:{{ hf.vchat.backdropPointerEvents }};"></div>
           <!-- Sheet -->
-          <div style="position:absolute;left:0;right:0;bottom:0;top:7%;z-index:300;background:#fff;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:{{ hf.vchat.sheetAnim }};">
+          <div style="position:absolute;left:0;right:0;bottom:{{ hf.vchat.sheetBottom }};top:{{ hf.vchat.sheetTop }};z-index:300;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -8px 30px rgba(17,17,22,.18);display:flex;flex-direction:column;transition:top 500ms cubic-bezier(.25,.46,.45,.94);animation:{{ hf.vchat.sheetAnim }};">
             <!-- Drag handle -->
-            <div style="flex:none;display:flex;justify-content:center;padding:10px 0 4px;">
+            <div onClick="{{ hf.vchat.liftDrawer }}" style="flex:none;display:flex;justify-content:center;padding:10px 0 4px;cursor:pointer;">
               <div style="width:36px;height:4px;background:var(--gray-300);border-radius:999px;"></div>
             </div>
-            <!-- Nav bar -->
-            <div style="height:48px;flex:none;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid rgba(0,0,0,.08);">
-              <button onClick="{{ hf.vchat.close }}" style="width:32px;height:32px;background:var(--gray-100);border:none;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
-                <span style="width:16px;height:16px;background:var(--gray-700);-webkit-mask:var(--ic-IconCloseOutline) center/contain no-repeat;mask:var(--ic-IconCloseOutline) center/contain no-repeat;display:block;"></span>
-              </button>
-              <div style="flex:1;text-align:center;font-family:var(--font-ui);font-weight:700;font-size:16px;color:var(--gray-950);">Update home facts</div>
-              <div style="width:32px;"></div>
-            </div>
-            <!-- Scrollable messages -->
-            <div style="flex:1;overflow-y:auto;padding:20px 16px 16px;display:flex;flex-direction:column;gap:10px;">
+            <!-- Normal nav bar -->
+            <sc-if value="{{ !hf.vchat.lowered }}">
+              <div style="height:48px;flex:none;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid rgba(0,0,0,.08);">
+                <button onClick="{{ hf.vchat.close }}" style="width:32px;height:32px;background:var(--gray-100);border:none;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+                  <span style="width:16px;height:16px;background:var(--gray-700);-webkit-mask:var(--ic-IconCloseOutline) center/contain no-repeat;mask:var(--ic-IconCloseOutline) center/contain no-repeat;display:block;"></span>
+                </button>
+                <div style="flex:1;text-align:center;font-family:var(--font-ui);font-weight:700;font-size:16px;color:var(--gray-950);">Update home facts</div>
+                <div style="width:32px;"></div>
+              </div>
+            </sc-if>
+            <!-- Scrollable messages (hidden when lowered) -->
+            <sc-if value="{{ !hf.vchat.lowered }}">
+            <div id="vchat-msgs" style="flex:1;overflow-y:auto;padding:20px 16px 16px;display:flex;flex-direction:column;gap:10px;">
               <!-- Opening Voyager message -->
               <div style="display:flex;justify-content:flex-start;">
                 <div style="max-width:82%;background:var(--gray-100);color:var(--gray-900);font-family:var(--font-ui);font-size:14px;padding:10px 14px;border-radius:16px 16px 16px 4px;line-height:1.5;">What would you like to update? I can change square footage, bedrooms, full baths, or renovation status.</div>
@@ -1170,14 +1194,80 @@
                     <button onClick="{{ hf.vchat.onCardSend }}" style="width:100%;margin-top:16px;background:var(--blue-600);color:#fff;border:none;border-radius:12px;font-family:var(--font-ui);font-weight:700;font-size:15px;padding:12px;cursor:pointer;">Save</button>
                   </div>
                 </sc-if>
+                <sc-if value="{{ msg.isZestCTA }}">
+                  <button onClick="{{ hf.vchat.zestimateReveal }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--blue-600);color:#fff;border:none;font-family:var(--font-ui);font-weight:700;font-size:15px;padding:13px;border-radius:12px;cursor:pointer;">Take me to my Zestimate<span style="width:17px;height:17px;background:#fff;-webkit-mask:var(--ic-IconArrowRightOutline) center/contain no-repeat;mask:var(--ic-IconArrowRightOutline) center/contain no-repeat;display:block;"></span></button>
+                </sc-if>
+                <sc-if value="{{ msg.isNextStep }}">
+                  <div style="width:100%;background:var(--blue-50);border:1px solid rgba(37,99,235,.18);border-radius:16px;padding:16px;">
+                    <div style="font-size:11px;font-weight:800;color:var(--blue-700);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Suggested next step</div>
+                    <div style="font-family:var(--font-brand);font-weight:900;font-size:19px;color:var(--gray-950);margin-bottom:4px;">{{ hf.vchat.nextStepName }}</div>
+                    <p style="font-family:var(--font-ui);font-size:13.5px;color:var(--gray-700);line-height:1.45;margin:0 0 14px;">{{ hf.vchat.nextStepWhy }}</p>
+                    <button onClick="{{ hf.vchat.nextStepGo }}" style="width:100%;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--blue-600);color:#fff;border:none;font-family:var(--font-ui);font-weight:700;font-size:15px;padding:13px;border-radius:12px;cursor:pointer;">{{ hf.vchat.nextStepBtn }}<span style="width:17px;height:17px;background:#fff;-webkit-mask:var(--ic-IconArrowRightOutline) center/contain no-repeat;mask:var(--ic-IconArrowRightOutline) center/contain no-repeat;display:block;"></span></button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ msg.isReno }}">
+                  <div style="width:100%;background:#f0f0f2;border-radius:16px;padding:16px 16px 14px;">
+                    <div style="font-family:var(--font-ui);font-size:11px;font-weight:700;color:var(--gray-500);margin-bottom:14px;text-transform:uppercase;letter-spacing:.06em;">What was added?</div>
+                    <!-- Bedrooms stepper -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                      <span style="font-family:var(--font-ui);font-size:15px;font-weight:400;color:var(--gray-950);">Bedrooms</span>
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <button onClick="{{ hf.vchat.stepBedsDown }}" style="width:34px;height:34px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);">−</button>
+                        <div style="width:48px;height:34px;background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;"><input value="{{ hf.vchat.renoSteppers.beds }}" onInput="{{ hf.vchat.stepBedsInput }}" style="width:100%;text-align:center;font-family:var(--font-brand);font-weight:900;font-size:18px;color:var(--gray-950);background:transparent;border:none;outline:none;padding:0;" /></div>
+                        <button onClick="{{ hf.vchat.stepBedsUp }}" style="width:34px;height:34px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);">+</button>
+                      </div>
+                    </div>
+                    <!-- Bathrooms stepper -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                      <span style="font-family:var(--font-ui);font-size:15px;font-weight:400;color:var(--gray-950);">Bathrooms</span>
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <button onClick="{{ hf.vchat.stepBathsDown }}" style="width:34px;height:34px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);">−</button>
+                        <div style="width:48px;height:34px;background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;"><input value="{{ hf.vchat.renoSteppers.baths }}" onInput="{{ hf.vchat.stepBathsInput }}" style="width:100%;text-align:center;font-family:var(--font-brand);font-weight:900;font-size:18px;color:var(--gray-950);background:transparent;border:none;outline:none;padding:0;" /></div>
+                        <button onClick="{{ hf.vchat.stepBathsUp }}" style="width:34px;height:34px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);">+</button>
+                      </div>
+                    </div>
+                    <!-- Finished basement stepper -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                      <span style="font-family:var(--font-ui);font-size:15px;font-weight:400;color:var(--gray-950);">Finished basement</span>
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <button onClick="{{ hf.vchat.stepBasementDown }}" style="width:34px;height:34px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);">−</button>
+                        <div style="width:48px;height:34px;background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;"><input value="{{ hf.vchat.renoSteppers.basement }}" onInput="{{ hf.vchat.stepBasementInput }}" style="width:100%;text-align:center;font-family:var(--font-brand);font-weight:900;font-size:18px;color:var(--gray-950);background:transparent;border:none;outline:none;padding:0;" /></div>
+                        <button onClick="{{ hf.vchat.stepBasementUp }}" style="width:34px;height:34px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);">+</button>
+                      </div>
+                    </div>
+                    <!-- Outdoor renovations stepper -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+                      <span style="font-family:var(--font-ui);font-size:15px;font-weight:400;color:var(--gray-950);">Outdoor renovations</span>
+                      <div style="display:flex;align-items:center;gap:8px;">
+                        <button onClick="{{ hf.vchat.stepOutdoorDown }}" style="width:34px;height:34px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);">−</button>
+                        <div style="width:48px;height:34px;background:#fff;border:1px solid rgba(0,0,0,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;"><input value="{{ hf.vchat.renoSteppers.outdoor }}" onInput="{{ hf.vchat.stepOutdoorInput }}" style="width:100%;text-align:center;font-family:var(--font-brand);font-weight:900;font-size:18px;color:var(--gray-950);background:transparent;border:none;outline:none;padding:0;" /></div>
+                        <button onClick="{{ hf.vchat.stepOutdoorUp }}" style="width:34px;height:34px;border-radius:999px;border:1px solid rgba(0,0,0,.12);background:#fff;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-600);">+</button>
+                      </div>
+                    </div>
+                    <p style="font-family:var(--font-ui);font-size:12px;color:var(--gray-500);margin:0 0 12px;line-height:1.4;">If something else was done, just tell me in the chat.</p>
+                    <button onClick="{{ hf.vchat.renoCardDone }}" style="width:100%;background:var(--blue-600);color:#fff;border:none;border-radius:12px;font-family:var(--font-ui);font-weight:700;font-size:15px;padding:12px;cursor:pointer;">Done</button>
+                  </div>
+                </sc-if>
               </sc-for>
             </div>
-            <!-- Bottom chat bar -->
-            <div style="flex:none;height:64px;background:#fff;border-top:1px solid var(--gray-200);display:flex;gap:8px;align-items:center;padding:0 16px 10px;">
-              <div style="flex:1;display:flex;align-items:center;background:#fff;border:1px solid var(--gray-300);border-radius:999px;padding:0 8px 0 16px;">
-                <input value="{{ hf.vchat.chatValue }}" onInput="{{ hf.vchat.onInput }}" onKeyDown="{{ hf.vchat.onKey }}" placeholder="Tell me what to update…" style="flex:1;font-family:var(--font-ui);font-size:15px;color:var(--gray-950);background:transparent;border:none;padding:10px 6px 10px 0;outline:none;" />
+            </sc-if>
+            <!-- Bottom area: always visible -->
+            <div style="flex:none;background:#fff;">
+              <sc-if value="{{ hf.vchat.showReadyChip }}">
+                <div style="padding:10px 16px 0;">
+                  <button onClick="{{ hf.vchat.openMainChat }}" style="display:inline-flex;align-items:center;gap:11px;background:var(--gray-50);border:1px solid var(--gray-200);border-radius:999px;padding:9px 9px 9px 16px;font-family:var(--font-ui);font-size:13.5px;font-weight:600;color:var(--gray-900);cursor:pointer;white-space:nowrap;">
+                    Ready to move on?
+                    <span style="flex:none;width:24px;height:24px;border-radius:999px;background:var(--gray-950);display:flex;align-items:center;justify-content:center;"><span style="width:13px;height:13px;background:#fff;-webkit-mask:var(--ic-IconArrowRightOutline) center/contain no-repeat;mask:var(--ic-IconArrowRightOutline) center/contain no-repeat;display:block;"></span></span>
+                  </button>
+                </div>
+              </sc-if>
+              <!-- Chat input — always visible, border above it -->
+              <div style="display:flex;gap:8px;align-items:center;padding:10px 16px 14px;border-top:1px solid var(--gray-200);">
+                <div style="flex:1;display:flex;align-items:center;background:#fff;border:1px solid var(--gray-300);border-radius:999px;padding:0 8px 0 16px;">
+                  <input value="{{ hf.vchat.chatValue }}" onInput="{{ hf.vchat.onInput }}" onKeyDown="{{ hf.vchat.onKey }}" placeholder="Tell me what to update…" style="flex:1;font-family:var(--font-ui);font-size:15px;color:var(--gray-950);background:transparent;border:none;padding:10px 6px 10px 0;outline:none;" />
+                </div>
+                <button onClick="{{ hf.vchat.onSend }}" style="width:40px;height:40px;flex:none;border-radius:999px;border:none;background:var(--blue-600);cursor:pointer;display:flex;align-items:center;justify-content:center;"><span style="width:18px;height:18px;background:#fff;-webkit-mask:var(--ic-IconArrowUpOutline) center/contain no-repeat;mask:var(--ic-IconArrowUpOutline) center/contain no-repeat;"></span></button>
               </div>
-              <button onClick="{{ hf.vchat.onSend }}" style="width:40px;height:40px;flex:none;border-radius:999px;border:none;background:var(--blue-600);cursor:pointer;display:flex;align-items:center;justify-content:center;"><span style="width:18px;height:18px;background:#fff;-webkit-mask:var(--ic-IconArrowUpOutline) center/contain no-repeat;mask:var(--ic-IconArrowUpOutline) center/contain no-repeat;"></span></button>
             </div>
           </div>
         </sc-if>
@@ -1198,6 +1288,7 @@ class Component extends DCLogic {
     this.aScrollRef = (typeof React!=='undefined' && React.createRef) ? React.createRef() : {current:null};
     this.aSpacerRef = (typeof React!=='undefined' && React.createRef) ? React.createRef() : {current:null};
     this.compsRef = (typeof React!=='undefined' && React.createRef) ? React.createRef() : {current:null};
+    this.homeFRef = (typeof React!=='undefined' && React.createRef) ? React.createRef() : {current:null};
     this.aToolScrollRef = (typeof React!=='undefined' && React.createRef) ? React.createRef() : {current:null};
     this.CHECK_IN_LINES = [
       "Anything else you'd like to dig into?",
@@ -1350,13 +1441,13 @@ class Component extends DCLogic {
       closing:{ action:'Review & accept an offer', text:"Since you're already listed, jump to Close your sale to manage offers and paperwork with confidence." }
     };
     this.state = {
-      a: { messages:this.INIT_A.slice(), mode:'input', addressValue:'', chips:[], ctaLabel:'', actionIdx:0, timing:null, screen:'chat', chatClosing:false, anchor:0, moreBelow:false, spacerH:0, claimed:false, view:'home', expanded:-1, collapsing:-1, engaged:{0:false,1:false,2:false,3:false}, salePrice:756800, mortgage:178436, checkInIdx:0, askValue:'', readyForNext:false, lastPromptKey:'', askedKeys:[] },
+      a: { messages:this.INIT_A.slice(), mode:'input', addressValue:'', chips:[], ctaLabel:'', actionIdx:0, timing:null, screen:'chat', chatClosing:false, anchor:0, moreBelow:false, spacerH:0, claimed:false, view:'home', expanded:-1, collapsing:-1, engaged:{0:false,1:false,2:false,3:false}, salePrice:756800, mortgage:178436, checkInIdx:0, askValue:'', readyForNext:false, lastPromptKey:'', askedKeys:[], homeFPrompt:false, homeFGlow:false },
       b: { step:0, touring:true },
       c: { screen:'list', step:0, actionIdx:0, rec:null },
       d: { step:0, touring:true, rec:null },
       w: { screen:0, stage:null, focus:null },
       ob: { beat: 0, selectedAddr: null, timeline: null, step: 0, uncertainty: null },
-      hf: { open: false, section: 'Key facts', fields: { sqft:'2,656', beds:'4', fullBaths:'2', baths:'3', kitchenReno:false, bathReno:false }, savedFields: { sqft:'2,656', beds:'4', fullBaths:'2', baths:'3', kitchenReno:false, bathReno:false }, msgs:[], chatValue:'', summary:{ show:false, text:'' }, vchat:{ open:false, closing:false, msgs:[], chatValue:'', pendingField:null, pendingCurrent:null, pendingValue:'' } }
+      hf: { open: false, section: 'Key facts', fields: { sqft:'2,656', beds:'4', fullBaths:'2', baths:'3', kitchenReno:false, bathReno:false }, savedFields: { sqft:'2,656', beds:'4', fullBaths:'2', baths:'3', kitchenReno:false, bathReno:false }, msgs:[], chatValue:'', summary:{ show:false, text:'' }, zestimate:1695000, flashSqft:false, flashZest:false, flashZcard:false, vchat:{ open:false, closing:false, msgs:[], chatValue:'', pendingField:null, pendingCurrent:null, pendingValue:'', awaitingRenovQ:false, awaitingBedSqftQ:false, pendingUpdate:null, renoSteppers:null, awaitingAnythingElse:false, lowered:false } }
     };
     this.ACTIONS = ["What's your home worth?","Track your market","Estimate net proceeds","Explore your options"];
     this.PLAN = [
@@ -1489,6 +1580,7 @@ class Component extends DCLogic {
     },700);
   }
   hfVOpen(){ this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, open:true}} })); }
+  hfVScrollBottom(){ setTimeout(()=>{ const el=document.getElementById('vchat-msgs'); if(el) el.scrollTop=el.scrollHeight; }, 30); }
   hfVClose(){
     this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, closing:true}} }));
     setTimeout(()=>{
@@ -1496,7 +1588,7 @@ class Component extends DCLogic {
       this.setState(s=>({ hf:{...s.hf, savedFields:{...s.hf.fields}, summary: summary ? {show:true,text:summary} : s.hf.summary, vchat:{ open:false, closing:false, msgs:[], chatValue:'', pendingField:null, pendingCurrent:null, pendingValue:'' }} }));
     },500);
   }
-  hfVInput(e){ this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, chatValue:e.target.value}} })); }
+  hfVInput(e){ this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, chatValue:e.target.value}}, a:{...s.a, homeFPrompt:false} })); }
   hfVCardInput(e){ this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, pendingValue:e.target.value}} })); }
   hfVCardKey(e){ if(e.key==='Enter'){ this.hfVCardSend(); } }
   hfVCardSend(){
@@ -1532,9 +1624,66 @@ class Component extends DCLogic {
     const raw = (vc.chatValue||'').toLowerCase().trim();
     if(!raw) return;
     const userMsg = vc.chatValue;
-    this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, open:true, chatValue:'', msgs:[...s.hf.vchat.msgs, {isU:true,isV:false,isCard:false,text:userMsg}]}} }));
+    this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, open:true, chatValue:'', msgs:[...s.hf.vchat.msgs, {isU:true,isV:false,isCard:false,text:userMsg}]}} }), ()=>this.hfVScrollBottom());
+    // scroll again after Voyager replies (covers all delayed setState paths)
+    setTimeout(()=>this.hfVScrollBottom(), 500);
+    setTimeout(()=>this.hfVScrollBottom(), 1000);
+    setTimeout(()=>this.hfVScrollBottom(), 1800);
 
-    // If a card is showing — only handle "done" from the bottom bar; value entry happens in the card
+    // --- Awaiting "anything else?" answer ---
+    if(vc.awaitingAnythingElse){
+      const noMore = /^(no+|nope|nah|done|all good|i'?m good|nothing|that'?s (it|all)|good|no thanks)/i.test(raw);
+      if(noMore){
+        this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, awaitingAnythingElse:false}} }));
+        this.hfConfirmAndLower();
+      } else {
+        this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, awaitingAnythingElse:false}} }));
+        // fall through to normal parsing below
+        setTimeout(()=>{ this.hfVSendRaw(raw, vc.chatValue); }, 0);
+      }
+      return;
+    }
+
+    // --- Awaiting reno answer (sqft increase) — now handled via stepper card, but catch typed responses too ---
+    if(vc.awaitingRenovQ && vc.pendingUpdate){
+      // User typed instead of using steppers — treat as "no specific reno info"
+      const upd = vc.pendingUpdate;
+      setTimeout(()=>{ this.hfApplyUpdate(upd, userMsg); }, 400);
+      return;
+    }
+
+    // --- Awaiting sqft answer (beds/baths increase) ---
+    if(vc.awaitingBedSqftQ && vc.pendingUpdate){
+      const upd = vc.pendingUpdate;
+      const notSure = /not sure|don'?t know|no idea|unsure|idk|estimate/.test(raw);
+      let newSqft = null;
+      if(!notSure){
+        const num = parseInt(raw.replace(/,/g,''), 10);
+        if(!isNaN(num) && num > 500) newSqft = num;
+      }
+      if(notSure || !newSqft){
+        // Estimate: +180 sqft per extra bedroom, +60 per extra bath
+        const oldBeds = parseInt((this.state.hf.fields.beds||'4'), 10);
+        const oldBaths = parseInt((this.state.hf.fields.fullBaths||'2'), 10);
+        const deltaBeds = upd.field==='beds' ? Math.max(0, upd.newVal - oldBeds) : 0;
+        const deltaBaths = upd.field==='fullBaths' ? Math.max(0, upd.newVal - oldBaths) : 0;
+        const oldSqftNum = parseInt((this.state.hf.fields.sqft||'2656').replace(/,/g,''), 10);
+        newSqft = oldSqftNum + deltaBeds*180 + deltaBaths*60;
+        const estMsg = `No problem — based on typical room sizes, I'll estimate your new square footage at ${newSqft.toLocaleString('en-US')} sqft. Updating your home facts now.`;
+        setTimeout(()=>{
+          this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, awaitingBedSqftQ:false, pendingUpdate:null, msgs:[...s.hf.vchat.msgs, {isU:false,isV:true,isCard:false,text:estMsg}]}} }));
+          setTimeout(()=>{ this.hfApplyUpdate({...upd, newSqft}, ''); }, 600);
+        }, 400);
+        return;
+      }
+      setTimeout(()=>{
+        this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, awaitingBedSqftQ:false, pendingUpdate:null}} }));
+        this.hfApplyUpdate({...upd, newSqft}, '');
+      }, 400);
+      return;
+    }
+
+    // If a card is showing — only handle "done" from the bottom bar
     if(vc.pendingField){
       if(/^(done|nothing|that'?s? ?(it|all)|no(thing)?|nope|all good|good)/.test(raw)){
         setTimeout(()=>{
@@ -1549,39 +1698,196 @@ class Component extends DCLogic {
       return;
     }
 
-    // No pending — parse what field they want to update
-    let field = null, label = '', current = '';
+    // Parse what field + value they want to update
     const f = this.state.hf.fields;
+    let field = null, newVal = null;
+    const numMatch = raw.match(/\b(\d[\d,]*)\b/);
+    const parsedNum = numMatch ? parseInt(numMatch[1].replace(/,/g,''), 10) : null;
+
     if(/sq(uare)?\s*f(oo|ee)?t|sqft|square feet|footage/.test(raw)){
-      field='sqft'; label='Finished square feet'; current=f.sqft+' sq ft';
+      field='sqft'; newVal=parsedNum;
     } else if(/bed(room)?s?/.test(raw)){
-      field='beds'; label='Bedrooms'; current=f.beds+' beds';
+      field='beds'; newVal=parsedNum;
     } else if(/bath(room)?s?/.test(raw)){
-      field='fullBaths'; label='Full baths'; current=f.fullBaths+' baths';
+      field='fullBaths'; newVal=parsedNum;
     } else if(/kitchen.*reno|reno.*kitchen|kitchen.*update/.test(raw)){
-      field='kitchenReno'; label='Kitchen renovation'; current=f.kitchenReno?'Already checked':'Not yet checked';
+      field='kitchenReno'; newVal=true;
     } else if(/bath.*reno|reno.*bath|bath.*update/.test(raw)){
-      field='bathReno'; label='Bathroom renovation'; current=f.bathReno?'Already checked':'Not yet checked';
+      field='bathReno'; newVal=true;
     }
 
-    if(!field){
+    if(!field || newVal===null){
       if(/^(done|nothing|that'?s? ?(it|all)|no(thing)?|nope|all good|good)/.test(raw)){
-        setTimeout(()=>{
-          this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, msgs:[...s.hf.vchat.msgs, {isU:false,isV:true,isCard:false,text:"All set! Your home facts are saved."}]}} }));
-        },400);
+        setTimeout(()=>{ this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, msgs:[...s.hf.vchat.msgs, {isU:false,isV:true,isCard:false,text:"All set! Your home facts are saved."}]}} })); },400);
         setTimeout(()=>{ this.hfVClose(); },800);
         return;
       }
-      setTimeout(()=>{
-        this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, msgs:[...s.hf.vchat.msgs, {isU:false,isV:true,isCard:false,text:"What would you like to update? I can change square footage, bedrooms, full baths, or renovation status."}]}} }));
-      },400);
+      // Field identified but no number — show inline card for the right field
+      if(field==='sqft'){
+        setTimeout(()=>{
+          const cur = this.state.hf.fields.sqft||'2,656';
+          const askMsg = { isU:false, isV:true, isCard:false, text:"What's the new square footage?" };
+          const inlineCard = { isU:false, isV:false, isCard:true, label:"Square footage", current:cur, field:'sqft' };
+          this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, pendingField:'sqft', pendingCurrent:cur, pendingValue:'', msgs:[...s.hf.vchat.msgs, askMsg, inlineCard]}} }));
+        }, 400);
+        return;
+      }
+      if(field==='beds'){
+        setTimeout(()=>{
+          const cur = this.state.hf.fields.beds||'4';
+          const askMsg = { isU:false, isV:true, isCard:false, text:"How many bedrooms?" };
+          const inlineCard = { isU:false, isV:false, isCard:true, label:"Bedrooms", current:cur, field:'beds' };
+          this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, pendingField:'beds', pendingCurrent:cur, pendingValue:'', msgs:[...s.hf.vchat.msgs, askMsg, inlineCard]}} }));
+        }, 400);
+        return;
+      }
+      if(field==='fullBaths'){
+        setTimeout(()=>{
+          const cur = this.state.hf.fields.fullBaths||'2';
+          const askMsg = { isU:false, isV:true, isCard:false, text:"How many full baths?" };
+          const inlineCard = { isU:false, isV:false, isCard:true, label:"Full baths", current:cur, field:'fullBaths' };
+          this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, pendingField:'fullBaths', pendingCurrent:cur, pendingValue:'', msgs:[...s.hf.vchat.msgs, askMsg, inlineCard]}} }));
+        }, 400);
+        return;
+      }
+      setTimeout(()=>{ this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, msgs:[...s.hf.vchat.msgs, {isU:false,isV:true,isCard:false,text:"What would you like to update? I can change square footage, bedrooms, full baths, or renovation status."}]}} })); },400);
       return;
     }
 
-    // Show the inline update card
+    const oldValNum = parseInt((f[field]||'0').toString().replace(/,/g,''), 10);
+    const isIncrease = newVal > oldValNum;
+
+    // sqft increase → ask reno question + show stepper card together
+    if(field==='sqft' && isIncrease){
+      setTimeout(()=>{
+        const renoMsg = { isU:false, isV:true, isCard:false, text:"Were there renovations? If so, tell me what was added below. If something else was done, just tell me in the chat." };
+        const stepperCard = { isU:false, isV:false, isCard:false, isReno:true };
+        this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, awaitingRenovQ:true, pendingUpdate:{field, newVal, newSqft:newVal}, renoSteppers:{beds:0, baths:0, basement:0, outdoor:0}, msgs:[...s.hf.vchat.msgs, renoMsg, stepperCard]}} }));
+      }, 400);
+      return;
+    }
+
+    // beds/baths increase → ask about sqft
+    if((field==='beds'||field==='fullBaths') && isIncrease){
+      setTimeout(()=>{
+        this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, awaitingBedSqftQ:true, pendingUpdate:{field, newVal}, msgs:[...s.hf.vchat.msgs, {isU:false,isV:true,isCard:false,text:"Do you know your new square footage? If not, I can estimate it based on typical room sizes."}]}} }));
+      }, 400);
+      return;
+    }
+
+    // Decrease or reno fields — apply directly
+    setTimeout(()=>{ this.hfApplyUpdate({field, newVal, newSqft: field==='sqft' ? newVal : null}, ''); }, 400);
+  }
+
+  hfStepReno(field, delta){
+    this.setState(s=>{
+      const rs = s.hf.vchat.renoSteppers || {beds:0,baths:0,basement:0,outdoor:0};
+      const newVal = Math.max(0, (rs[field]||0) + delta);
+      return { hf:{...s.hf, vchat:{...s.hf.vchat, renoSteppers:{...rs, [field]:newVal}}} };
+    });
+  }
+  hfStepRenoInput(field, raw){
+    const num = parseInt(raw, 10);
+    const val = isNaN(num) ? 0 : Math.max(0, num);
+    this.setState(s=>{
+      const rs = s.hf.vchat.renoSteppers || {beds:0,baths:0,basement:0,outdoor:0};
+      return { hf:{...s.hf, vchat:{...s.hf.vchat, renoSteppers:{...rs, [field]:val}}} };
+    });
+  }
+  hfRenoCardDone(){
+    const vc = this.state.hf.vchat;
+    const rs = vc.renoSteppers || {beds:0,baths:0,basement:0,outdoor:0};
+    const upd = vc.pendingUpdate;
+    // Build a summary of what was added for confirmation text
+    const parts = [];
+    if(rs.beds>0) parts.push(`${rs.beds} bedroom${rs.beds>1?'s':''}`);
+    if(rs.baths>0) parts.push(`${rs.baths} bathroom${rs.baths>1?'s':''}`);
+    if(rs.basement>0) parts.push(`${rs.basement} finished basement${rs.basement>1?'s':''}`);
+    if(rs.outdoor>0) parts.push(`${rs.outdoor} outdoor addition${rs.outdoor>1?'s':''}`);
+    const renovNote = parts.length ? parts.join(', ') : 'general renovations';
+    // Clear stepper card from msgs
+    this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, awaitingRenovQ:false, renoSteppers:null, msgs: s.hf.vchat.msgs.filter(m=>!m.isReno)}} }), ()=>{
+      this.hfApplyUpdate(upd, renovNote);
+    });
+  }
+  hfConfirmAndLower(){
+    const hf = this.state.hf;
+    const pendZest = hf.pendingZest || hf.zestimate || 1695000;
+    const pendFields = hf.pendingFields || hf.fields;
+    const zestFmt = '$'+pendZest.toLocaleString('en-US');
+    const sqftNum = parseInt((pendFields.sqft||'2656').replace(/,/g,''), 10);
+    const perSqftFmt = '$'+Math.round(pendZest/sqftNum).toLocaleString('en-US');
+    const confirmText1 = `Done! Your home facts have been updated. Your Zestimate will be updated to ${zestFmt} (${perSqftFmt}/sqft).`;
+    const confirmText2 = `Take a look at your Zestimate — check the numbers, ask me anything. When you're ready to move on, just say so.`;
+    const summaryText = this.hfBuildSummary(pendFields, hf.fields);
+    this.setState(s=>({ hf:{...s.hf, factsUpdated:true, summary: summaryText ? {show:false, text:summaryText} : s.hf.summary, vchat:{...s.hf.vchat, msgs:[...s.hf.vchat.msgs,
+      {isU:false,isV:true,isCard:false,text:confirmText1},
+      {isU:false,isV:true,isCard:false,text:confirmText2},
+      {isU:false,isV:false,isCard:false,isZestCTA:true}
+    ]}} }), ()=>this.hfVScrollBottom());
+  }
+  hfZestimateReveal(){
+    // Step 1: close drawer
+    this.hfVClose();
+    // Step 2: scroll to top after drawer closes
+    setTimeout(()=>{ const scroll=document.querySelector('[data-tool-scroll]'); if(scroll) scroll.scrollTo({ top:0, behavior:'smooth' }); }, 600);
+    // Step 3: count-up from old (current state) to pending (new values)
     setTimeout(()=>{
-      this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, pendingField:field, pendingCurrent:current, msgs:[...s.hf.vchat.msgs, {isU:false,isV:false,isCard:true,label,current}]}} }));
-    },400);
+      const hf = this.state.hf;
+      const fromZest = hf.zestimate || 1695000;
+      const toZest = hf.pendingZest || fromZest;
+      const pendFields = hf.pendingFields || hf.fields;
+      const fromSqft = parseInt((hf.fields.sqft||'2656').replace(/,/g,''),10);
+      const toSqft = parseInt((pendFields.sqft||'2656').replace(/,/g,''),10);
+      const duration = 1000;
+      const steps = 30;
+      const interval = duration / steps;
+      let step = 0;
+      this.setState(s=>({ hf:{...s.hf, flashZcard:true, countingUp:true} }));
+      const ticker = setInterval(()=>{
+        step++;
+        const progress = step / steps;
+        const ease = 1 - Math.pow(1 - progress, 3);
+        const curZest = Math.round(fromZest + (toZest - fromZest) * ease);
+        const curSqft = Math.round(fromSqft + (toSqft - fromSqft) * ease);
+        this.setState(s=>({ hf:{...s.hf, zestimate:curZest, fields:{...s.hf.fields, sqft:curSqft.toLocaleString('en-US')}} }));
+        if(step >= steps){
+          clearInterval(ticker);
+          // commit pending as real state, clear pending + animation flags, reveal summary card
+          this.setState(s=>({ hf:{...s.hf, zestimate:toZest, fields:pendFields, savedFields:pendFields, pendingZest:null, pendingFields:null, flashZcard:false, countingUp:false, summary:{...s.hf.summary, show:true}} }));
+        }
+      }, interval);
+    }, 1300);
+  }
+  hfVSendRaw(raw, original){ /* placeholder — falls through to hfVSend after anything-else clears */ }
+  hfApplyUpdate(upd, renovNote){
+    const { field, newVal, newSqft } = upd;
+    const hf = this.state.hf;
+    const f = hf.fields;
+    const oldSqftNum = parseInt((f.sqft||'2656').replace(/,/g,''), 10);
+    const oldZest = hf.zestimate || 1695000;
+    const oldPerSqft = oldZest / oldSqftNum;
+
+    // Recalculate zestimate
+    let newFields = {...f, [field]: typeof newVal==='number' ? newVal.toString() : newVal};
+    if(newSqft && newSqft !== oldSqftNum){
+      newFields.sqft = newSqft.toLocaleString('en-US');
+    }
+    const finalSqft = parseInt((newFields.sqft||'2656').replace(/,/g,''), 10);
+    const delta = finalSqft - oldSqftNum;
+    let newZest;
+    if(delta > 0){ newZest = Math.round(oldZest + delta * oldPerSqft * 0.7); }
+    else if(delta < 0){ newZest = Math.round(oldZest + delta * oldPerSqft); }
+    else { newZest = oldZest; }
+
+    // Ask "anything else?" before confirming
+    const fieldLabel = field==='sqft'?'square footage':field==='beds'?'bedroom count':'bath count';
+    const sqftChanged = finalSqft !== oldSqftNum;
+    let updatedText = `Got it — I've updated your ${fieldLabel}`;
+    if(field!=='sqft' && sqftChanged) updatedText += ` and estimated your new square footage at ${finalSqft.toLocaleString('en-US')} sqft`;
+    updatedText += '. Is there anything else you\'d like to update?';
+
+    this.setState(s=>({ hf:{...s.hf, pendingZest:newZest, pendingFields:newFields, vchat:{...s.hf.vchat, awaitingRenovQ:false, awaitingBedSqftQ:false, pendingUpdate:null, awaitingAnythingElse:true, msgs:[...s.hf.vchat.msgs, {isU:false,isV:true,isCard:false,text:updatedText}]}} }));
   }
   hfFieldInput(field, val){
     this.setState(s=>{
@@ -1598,11 +1904,27 @@ class Component extends DCLogic {
     // how → Tool 3 (selling options), why → Tool 3 (sell/rent/wait)
     const map = { value:0, timing:0, proceeds:0, how:3, why:3 };
     const idx = map[this.state.ob.uncertainty] ?? 0;
-    this.setState(s=>({ ob:{...s.ob, beat:5}, a:{...s.a, view:'tool', actionIdx:idx, screen:'action', claimed:true} }));
+    this.setState(s=>({ ob:{...s.ob, beat:5}, a:{...s.a, view:'tool', actionIdx:idx, screen:'action', claimed:true, homeFPrompt: idx===0, homeFGlow: idx===0} }), ()=>{
+      if(idx===0){
+        setTimeout(()=>{ const scroll=document.querySelector('[data-tool-scroll]'); const target=document.getElementById('home-facts-anchor'); if(scroll&&target){ const tr=target.getBoundingClientRect(); const sr=scroll.getBoundingClientRect(); scroll.scrollTo({ top: scroll.scrollTop+tr.top-sr.top-12, behavior:'smooth' }); } }, 150);
+        setTimeout(()=>{ this.setState(s=>({a:{...s.a, homeFGlow:false}})); }, 3500);
+      }
+    });
   }
 
   refreshMore(){ const c=this.aScrollRef.current; if(!c) return; const nodes=c.querySelectorAll('[data-mi]'); const last=nodes[nodes.length-1]; let more=false; if(last){ const cr=c.getBoundingClientRect(); more = last.getBoundingClientRect().bottom > cr.bottom + 6; } if(more!==this.state.a.moreBelow) this.setState(s=>({a:{...s.a, moreBelow:more}})); }
   onScrollA(){ this.refreshMore(); }
+  onScrollTool(){
+    const scroll = this.aToolScrollRef.current;
+    const comps = this.compsRef.current;
+    if(!scroll || !comps) return;
+    const sr = scroll.getBoundingClientRect();
+    const cr = comps.getBoundingClientRect();
+    const visible = cr.top < sr.bottom - 40;
+    if(visible !== this.state.hf.compsVisible){
+      this.setState(s=>({ hf:{...s.hf, compsVisible:visible} }));
+    }
+  }
   scrollDownA(){ const c=this.aScrollRef.current; if(!c) return; c.scrollTo({ top:Math.min(c.scrollTop+260, c.scrollHeight), behavior:'smooth' }); }
   componentDidUpdate(prevProps){
     const c=this.aScrollRef.current; if(!c) return;
@@ -1692,17 +2014,25 @@ class Component extends DCLogic {
     this.setState(s=>({a:{...s.a, expanded:-1}}));
     setTimeout(()=>{ this.setState(s=>({a:{...s.a, expanded:target}})); }, 370);
   }
-  openTool(i){ this.setState(s=>({a:{...s.a, view:'tool', actionIdx:i, askedKeys:[]}}), ()=>{ const el=this.aToolScrollRef.current; if(el) el.scrollTop=0; }); }
+  openTool(i){ this.setState(s=>({a:{...s.a, view:'tool', actionIdx:i, askedKeys:[]}}), ()=>{ if(i===0){ setTimeout(()=>{ const scroll=document.querySelector('[data-tool-scroll]'); const target=document.getElementById('home-facts-anchor'); if(scroll&&target){ const tr=target.getBoundingClientRect(); const sr=scroll.getBoundingClientRect(); scroll.scrollTo({ top: scroll.scrollTop+tr.top-sr.top-12, behavior:'smooth' }); } }, 120); } else { const el=this.aToolScrollRef.current; if(el) el.scrollTop=0; } }); }
   msOfTool(t){ for(let i=0;i<this.MS.length;i++){ if(this.MS[i].actions.some(a=>a.tool===t)) return i; } return -1; }
   backHome(){ this.setState(s=>({a:{...s.a, view:'home', expanded: this.msOfTool(s.a.actionIdx)}})); }
+  hfCommitPending(){
+    const hf = this.state.hf;
+    if(hf.pendingZest || hf.pendingFields){
+      const pendFields = hf.pendingFields || hf.fields;
+      const newZest = hf.pendingZest || hf.zestimate;
+      this.setState(s=>({ hf:{...s.hf, zestimate:newZest, fields:pendFields, savedFields:pendFields, pendingZest:null, pendingFields:null, factsUpdated:true} }));
+    }
+  }
   // Tapping a prompt chip: open Voyager, answer it, surface follow-ups, mark engaged
   tapPrompt(key){
+    this.hfCommitPending();
     this.setState(s=>{
       const t=s.a.actionIdx;
       const tree=this.A_PROMPTS[t]; if(!tree) return {};
       const node=tree.nodes[key]; if(!node) return {};
-      const checkIn = { who:'v', kind:'checkin', text: this.CHECK_IN_LINES[s.a.checkInIdx % this.CHECK_IN_LINES.length] };
-      const msgs=[...s.a.messages, { who:'u', text:node.q }, { who:'v', text:node.a }, checkIn];
+      const msgs=[...s.a.messages, { who:'u', text:node.q }, { who:'v', text:node.a }];
       const askedKeys=[...(s.a.askedKeys||[]), key];
       const rootKeys = t===0
         ? (key==='c_price'||key==='c_standout'||askedKeys.some(k=>k==='c_price'||k==='c_standout')
@@ -1710,9 +2040,10 @@ class Component extends DCLogic {
             : tree.root)
         : tree.root;
       const accImproveAsked = t===0 && askedKeys.some(k=>k==='v_acc'||k==='v_improve');
-      const follow = rootKeys.filter(k=>{
+      let follow = rootKeys.filter(k=>{
         if(!askedKeys.includes(k)){
           if(accImproveAsked && (k==='v_acc'||k==='v_improve')) return false;
+          if(this.state.hf.factsUpdated && (k==='v_acc'||k==='v_improve')) return false;
           return true;
         }
         return false;
@@ -1725,7 +2056,8 @@ class Component extends DCLogic {
   onAskKey(e){ if(e.key==='Enter'){ this.sendAsk(); } }
   sendAsk(){
     const raw=(this.state.a.askValue||'').trim(); if(!raw) return;
-    const done=/^(no+|nope|nah|done|all good|i'?m good|i am good|i'?m done|i am done|that'?s (it|all)|that works|nothing else|i'?m set|i'?m all set|good|yeah no|no thanks)/i.test(raw);
+    const done=/^(no+|nope|nah|done|all good|i'?m good|i am good|i'?m done|i am done|that'?s (it|all)|that works|nothing else|i'?m set|i'?m all set|good|yeah no|no thanks)/i.test(raw)
+      || /ready.*(move on|next|go)|what'?s next|next step|move on/i.test(raw);
     this.setState(s=>{
       if(done){
         const msgs=[...s.a.messages, {who:'u',text:raw}];
@@ -1737,11 +2069,27 @@ class Component extends DCLogic {
           : t===3
           ? "Happy to dig in. For now in this prototype I'm focused on finding the right agent and getting list-ready. Anything else I can help clarify?"
           : "Happy to dig in. For now in this prototype I'm focused on the Zestimate and comps. Anything else about your home value I can clarify?";
-        const checkIn = { who:'v', kind:'checkin', text: this.CHECK_IN_LINES[s.a.checkInIdx % this.CHECK_IN_LINES.length] };
-        const msgs=[...s.a.messages, {who:'u',text:raw}, {who:'v',text:fallback}, checkIn];
-        return { a:{...s.a, messages:msgs, mode:'ask', askValue:'', anchor:msgs.length+999, checkInIdx:(s.a.checkInIdx||0)+1} };
+        const msgs=[...s.a.messages, {who:'u',text:raw}, {who:'v',text:fallback}];
+        return { a:{...s.a, messages:msgs, mode:'ask', askValue:'', anchor:msgs.length+999} };
       }
     });
+  }
+  openMainChatFromVchat(){
+    const hf = this.state.hf;
+    const a = this.state.a;
+    // Commit any pending values that weren't applied via the animation CTA
+    const pendFields = hf.pendingFields || hf.fields;
+    const newZest = hf.pendingZest || hf.zestimate;
+    const zestFmt = '$'+newZest.toLocaleString('en-US');
+    // Inject context message once
+    if(!hf.factsContextInjected){
+      const contextMsg = { who:'v', isV:true, hasText:true, text:`Your home facts have been updated and your Zestimate is now ${zestFmt}. What would you like to explore?` };
+      const updatedMsgs = [...(a.messages||[]), contextMsg];
+      const updatedChips = (a.chips||[]).filter(c=>c.label!=='Ready to move on?');
+      this.setState(s=>({ a:{...s.a, screen:'chat', view:'tool', actionIdx:0, messages:updatedMsgs, chips:updatedChips, mode:'ask', anchor:updatedMsgs.length+999}, hf:{...s.hf, zestimate:newZest, fields:pendFields, savedFields:pendFields, pendingZest:null, pendingFields:null, factsUpdated:true, factsContextInjected:true} }));
+    } else {
+      this.setState(s=>({ a:{...s.a, screen:'chat', view:'tool', actionIdx:0} }));
+    }
   }
   closeChat(){
     this.setState(s=>({a:{...s.a, chatClosing:true}}));
@@ -1759,7 +2107,7 @@ class Component extends DCLogic {
     }, 500);
   }
   // Navigate to a tool and open its card (from "Let's go", a pill, or the bottom nudge)
-  gotoTool(i){ this.setState(s=>({a:{...s.a, view:'tool', actionIdx:i, screen:'action', askedKeys:[]}}), ()=>{ const el=this.aToolScrollRef.current; if(el) el.scrollTop=0; }); }
+  gotoTool(i){ this.setState(s=>({a:{...s.a, view:'tool', actionIdx:i, screen:'action', askedKeys:[]}}), ()=>{ if(i===0){ setTimeout(()=>{ const scroll=document.querySelector('[data-tool-scroll]'); const target=document.getElementById('home-facts-anchor'); if(scroll&&target){ const tr=target.getBoundingClientRect(); const sr=scroll.getBoundingClientRect(); scroll.scrollTo({ top: scroll.scrollTop+tr.top-sr.top-12, behavior:'smooth' }); } }, 120); } else { const el=this.aToolScrollRef.current; if(el) el.scrollTop=0; } }); }
   gotoPrep(){ this.setState(s=>({a:{...s.a, view:'home', screen:'action', expanded:1}})); }
   onSale(e){ const v=parseInt(e.target.value,10)||0; this.setState(s=>({a:{...s.a, salePrice:v, engaged:{...s.a.engaged,2:true}, engCount:(s.a.engCount||0)+1}})); }
   onMortgage(e){ const v=parseInt(e.target.value,10)||0; this.setState(s=>({a:{...s.a, mortgage:v, engaged:{...s.a.engaged,2:true}, engCount:(s.a.engCount||0)+1}})); }
@@ -1793,7 +2141,7 @@ class Component extends DCLogic {
   restartW(){ this.setState(()=>({w:{screen:0, stage:null, focus:null}})); }
 
   renderVals(){
-    const { a, b, c, d, w, ob } = this.state;
+    const { a, b, c, d, w, ob, hf } = this.state;
     const vName = this.props.voyagerName || 'Seller Advisor';
     const selBg = (this.props.pillStyle==='blue') ? 'var(--blue-600)' : 'var(--gray-950)';
     const pills = this.PILLS.map((label,i)=>({ label, isAll:i===0, sel:i===1, plain:(i!==0 && i!==1) }));
@@ -1872,16 +2220,19 @@ class Component extends DCLogic {
       action: a.screen==='action',
       messages: aMsgs, chips:a.chips,
       modeInput: a.mode==='input', showChips: (a.mode==='chips' || (a.mode==='ask' && (a.chips||[]).length>0)) && !a.readyForNext, showCta: a.mode==='cta', ctaLabel:a.ctaLabel,
+      showReadyNudge: a.mode==='ask' && !a.readyForNext && !!hf.factsUpdated,
       modeAsk: a.mode==='ask', notModeAsk: a.mode!=='ask', askValue: a.askValue||'', onAskInput:(e)=>this.onAskInput(e), onAskKey:(e)=>this.onAskKey(e), sendAsk:()=>this.sendAsk(),
       addressValue:a.addressValue, onAddr:(e)=>this.onAddr(e), onKey:(e)=>this.onKey(e), submitAddr:()=>this.submitAddr(), useLocation:()=>this.useLocation(),
       inputPlaceholder: a.mode==='input' ? 'Enter your home address' : 'Ask Zillow…',
       chatPlaceholder: this.state.hf.open ? 'Tell me what you want to update…' : 'Ask about your home value…',
+      actionChatPlaceholder: a.homeFPrompt ? 'Use me to update your home facts' : 'Ask about your home value…',
+      actionChatGlowClass: a.homeFGlow ? 'chat-glow' : '',
       sendBg: a.mode==='input' ? 'var(--blue-600)' : 'var(--gray-300)',
-      scrollRef:this.aScrollRef, onScroll:()=>this.onScrollA(), moreBelow:a.moreBelow, scrollDown:()=>this.scrollDownA(), spacerHpx:(a.spacerH||0)+'px', compsRef:this.compsRef, toolScrollRef:this.aToolScrollRef,
+      scrollRef:this.aScrollRef, onScroll:()=>this.onScrollA(), toolScrollOnScroll:()=>this.onScrollTool(), moreBelow:a.moreBelow, scrollDown:()=>this.scrollDownA(), spacerHpx:(a.spacerH||0)+'px', compsRef:this.compsRef, homeFRef:this.homeFRef, toolScrollRef:this.aToolScrollRef,
       openHF: () => this.openHF(),
       claimed:a.claimed, planHeading: a.claimed ? 'Your selling plan' : 'How selling works',
       onCta: ()=>this.setA({screen:'action', view:'tool'}),
-      openChat: ()=>this.setA({screen:'chat'}),
+      openChat: ()=>{ this.hfCommitPending(); this.setA({screen:'chat'}); },
       closeChat: ()=>this.closeChat(),
       closeChatToComps: ()=>this.closeChatToComps(),
       restart: ()=>this.restartA(),
@@ -1901,10 +2252,12 @@ class Component extends DCLogic {
       heroCity: selAddrData.city,
       heroStats: selAddrData.stats,
       heroStatsCard: selAddrData.statsCard,
-      heroZest: selAddrData.zest,
+      heroZest: (hf.zestimate && hf.zestimate !== 1695000) ? '$'+hf.zestimate.toLocaleString('en-US') : selAddrData.zest,
       comps: this.A_COMPS,
       compChip0: ()=>this.tapPrompt('c_price'),
       compChip1: ()=>this.tapPrompt('c_standout'),
+      factsUpdated: !!hf.factsUpdated,
+      openChatReady: ()=>this.openMainChatFromVchat(),
       // AI summary + root prompt chips for the current tool
       promptSummary: (()=>{
         if(a.actionIdx===2){
@@ -1923,9 +2276,9 @@ class Component extends DCLogic {
           else roots=['p_timing','p_more','p_prep'];
         } else {
           roots = tree.root.slice();
-          if(a.actionIdx===0 && this.state.hf.summary.show){
-            roots = roots.filter(k=>k!=='v_acc');
-            if(!roots.includes('v_value')) roots.push('v_value');
+          if(a.actionIdx===0 && this.state.hf.factsUpdated){
+            roots = roots.filter(k=>k!=='v_acc' && k!=='v_improve');
+            if(!roots.includes('v_value')) roots.unshift('v_value');
           }
         }
         return roots.map(k=>({ q:tree.nodes[k].q, onTap:()=>this.tapPrompt(k) }));
@@ -1952,7 +2305,7 @@ class Component extends DCLogic {
           const expanded = a.expanded===i;
           // scale is included in the transition — collapsed=0.85, expanded=1 — CSS interpolates it
           const cardStyle = expanded
-            ? BASE + TRANS + `bottom:11%;height:78%;z-index:30;border-radius:20px;box-shadow:0 12px 40px rgba(17,17,22,.28);transform:scale(1);transform-origin:bottom center;`
+            ? BASE + TRANS + `bottom:76px;height:375px;z-index:30;border-radius:20px;box-shadow:0 12px 40px rgba(17,17,22,.28);transform:scale(1);transform-origin:bottom center;`
             : BASE + TRANS + `bottom:${bottomOf(i)}px;height:${PEEK}px;z-index:${N-i};border-radius:20px 20px 0 0;box-shadow:0 -4px 14px rgba(17,17,22,.11);transform:scale(0.93);transform-origin:bottom center;`;
           return {
             name: m.name, sub: m.sub,
@@ -2185,7 +2538,6 @@ class Component extends DCLogic {
       letsGo: () => this.obLetsGo()
     };
 
-    const hf = this.state.hf;
     const sec = hf.section;
     const kfOpen = sec === 'Key facts';
     const rdOpen = sec === 'Room details';
@@ -2194,7 +2546,9 @@ class Component extends DCLogic {
     const otOpen = sec === 'Other property details';
     const phOpen = sec === 'Photos and media';
     const sqftNum = parseInt((hf.fields.sqft||'2656').replace(/,/g,''),10)||2656;
-    const zPerSqft = '$'+Math.round(1695000/sqftNum).toLocaleString('en-US');
+    const zestimate = hf.zestimate || 1695000;
+    const zPerSqft = '$'+Math.round(zestimate/sqftNum).toLocaleString('en-US');
+    const zestimateFmt = '$'+zestimate.toLocaleString('en-US');
     const vc = hf.vchat;
     const HF = {
       open: hf.open,
@@ -2227,7 +2581,15 @@ class Component extends DCLogic {
       bedsInput: (e) => this.hfBedsInput(e),
       bathsInput: (e) => this.hfBathsInput(e),
       zPerSqft: zPerSqft,
+      zestimateFmt: zestimateFmt,
+      flashSqft: hf.flashSqft,
+      flashZest: hf.flashZest,
+      flashZcard: hf.flashZcard,
+      countingUp: !!hf.countingUp,
       heroLine: hf.fields.beds+' bd · '+hf.fields.baths+' ba · '+hf.fields.sqft+' sqft',
+      heroSqftClass: hf.flashSqft ? 'stat-pop' : '',
+      zestCountColor: hf.countingUp ? '#6ee7b7' : '#fff',
+      sqftCountStyle: hf.countingUp ? 'font-weight:700;color:#6ee7b7;' : '',
       summaryShow: hf.summary.show,
       summaryText: hf.summary.text,
       dismissSummary: () => this.hfDismissSummary(),
@@ -2245,9 +2607,35 @@ class Component extends DCLogic {
         onCardSend: () => this.hfVCardSend(),
         pendingValue: vc.pendingValue,
         close: () => this.hfVClose(),
-        vchatVisible: vc.open || vc.closing,
+        vchatVisible: (vc.open || vc.closing) && a.screen !== 'chat',
+        lowered: vc.lowered,
+        showReadyChip: vc.lowered && !!hf.factsUpdated && !hf.compsVisible,
         sheetAnim: vc.closing ? 'sheetDown 480ms cubic-bezier(.4,0,.6,1) both' : 'sheetUp 320ms cubic-bezier(.25,.46,.45,.94) both',
-        backdropOpacity: vc.closing ? '0' : '1',
+        sheetTop: vc.lowered ? 'calc(100% - 130px)' : '7%',
+        sheetBottom: vc.lowered ? '68px' : '0',
+        backdropOpacity: (vc.closing || vc.lowered) ? '0' : '1',
+        backdropPointerEvents: (vc.closing || vc.lowered) ? 'none' : 'auto',
+        renoSteppers: vc.renoSteppers || {beds:0,baths:0,basement:0,outdoor:0},
+        stepBedsUp:   () => this.hfStepReno('beds', 1),
+        stepBedsDown: () => this.hfStepReno('beds', -1),
+        stepBathsUp:   () => this.hfStepReno('baths', 1),
+        stepBathsDown: () => this.hfStepReno('baths', -1),
+        stepBasementUp:   () => this.hfStepReno('basement', 1),
+        stepBasementDown: () => this.hfStepReno('basement', -1),
+        stepOutdoorUp:   () => this.hfStepReno('outdoor', 1),
+        stepOutdoorDown: () => this.hfStepReno('outdoor', -1),
+        stepBedsInput:     (e) => this.hfStepRenoInput('beds', e.target.value),
+        stepBathsInput:    (e) => this.hfStepRenoInput('baths', e.target.value),
+        stepBasementInput: (e) => this.hfStepRenoInput('basement', e.target.value),
+        stepOutdoorInput:  (e) => this.hfStepRenoInput('outdoor', e.target.value),
+        renoCardDone: () => this.hfRenoCardDone(),
+        liftDrawer: () => this.setState(s=>({ hf:{...s.hf, vchat:{...s.hf.vchat, lowered:false}} })),
+        openMainChat: () => this.openMainChatFromVchat(),
+        zestimateReveal: () => this.hfZestimateReveal(),
+        nextStepGo: bottomRecNext.go,
+        nextStepName: bottomRecNext.name,
+        nextStepWhy: bottomRecNext.why,
+        nextStepBtn: bottomRecNext.btn,
       },
       openVchat: () => this.hfVOpen(),
     };
